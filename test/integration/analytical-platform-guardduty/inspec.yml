@@ -1,0 +1,8 @@
+name: analytical-platform-guardduty
+title: Analytical Plaform AWS GuardDuty
+maintainer: analytics-platform-tech@digital.justice.gov.uk
+license: Apache-2.0
+summary: InSpec Compliance Profile for Analytical Plaform AWS GuardDuty
+version: 0.1.0
+supports:
+  platform: aws

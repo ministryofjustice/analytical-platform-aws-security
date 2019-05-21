@@ -1,0 +1,23 @@
+---
+driver:
+  name: terraform
+  root_module_directory: test/fixtures/wrapper
+
+provisioner:
+  name: terraform
+
+verifier:
+  name: terraform
+
+platforms:
+  - name: aws
+    verifier:
+      systems:
+        - name: remote
+          format: doc
+          backend: aws
+          controls:
+            - iam_resources
+
+suites:
+  - name: analytical-platform-guardduty
