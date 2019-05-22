@@ -4,5 +4,4 @@ vendor/
 test/fixtures/wrapper/.terraform/
 .bundle
 sns-slack-integration/
-iam-role/
 .terraform/

@@ -17,7 +17,7 @@ platforms:
           format: doc
           backend: aws
           controls:
-            - iam_resources
+            - guardduty
 
 suites:
   - name: analytical-platform-guardduty
