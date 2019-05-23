@@ -1,11 +1,10 @@
-terraform {
-  required_version = "~> 0.11.0"
-  backend          "local"          {}
-}
-
+# Assume special IAM-Role (../iam-role) in remote account to create roles and policies
 provider "aws" {
-  region  = "${var.region}"
-  version = "~> 2.5"
+  region = "${var.region}"
+
+  assume_role {
+    role_arn = "arn:aws:iam::${var.assume_role_in_account_id}:role/${var.landing_iam_role}"
+  }
 }
 
 variable "region" {
@@ -15,5 +14,3 @@ variable "region" {
 variable "publish_frequency" {
   default = "FIFTEEN_MINUTES"
 }
-
-variable "landing_account_id" {}
