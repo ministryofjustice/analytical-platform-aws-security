@@ -21,6 +21,8 @@ variable "guardduty_iam_role" {
 
 variable "assume_role_in_account_id" {}
 
-variable "members_list" {}
+variable "members_list" {
+  type = "list"
+}
 
 variable "email_invite" {}

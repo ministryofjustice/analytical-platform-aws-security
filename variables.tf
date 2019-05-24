@@ -22,7 +22,7 @@ variable "ap_accounts" {
 }
 
 variable "members_list" {
-  type    = list
+  type    = "list"
   default = ["525294151996", "312423030077", "593291632749"]
 }
 
