@@ -18,7 +18,7 @@ provider "aws" {
 }
 
 variable "ap_accounts" {
-  type = map
+  type = "map"
 }
 
 variable "members_list" {
