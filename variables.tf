@@ -17,6 +17,15 @@ provider "aws" {
   version = "~> 2.6"
 }
 
-variable "landing_account_id" {
-  description = "ID of account containing IAM users"
+variable "ap_accounts" {
+  type = map
+}
+
+variable "members_list" {
+  type    = list
+  default = ["525294151996", "312423030077", "593291632749"]
+}
+
+variable "email_invite" {
+  default = "analytics-platform-tech@digital.justice.gov.uk"
 }

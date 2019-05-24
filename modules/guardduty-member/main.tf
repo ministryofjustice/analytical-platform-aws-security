@@ -1,10 +1,19 @@
 # -----------------------------------------------------------
-# enable guard duty
+# enable member aws guard duty
 # -----------------------------------------------------------
 
-resource "aws_guardduty_detector" "guardduty" {
+resource "aws_guardduty_detector" "member" {
   enable                       = true
-  finding_publishing_frequency =  "${var.publish_frequency}"
+  finding_publishing_frequency = "${var.publish_frequency}"
+}
+
+# -----------------------------------------------------------
+# accept invitation from master aws guard duty
+# -----------------------------------------------------------
+
+resource "aws_guardduty_invite_accepter" "member" {
+  detector_id       = "${aws_guardduty_detector.member.id}"
+  master_account_id = "${var.master_account_id}"
 }
 
 # -----------------------------------------------------------
