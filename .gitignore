@@ -1,0 +1,7 @@
+Gemfile.lock
+vendor/
+.kitchen/
+test/fixtures/wrapper/.terraform/
+.bundle
+sns-slack-integration/
+.terraform/
