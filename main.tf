@@ -1,8 +1,3 @@
-provider "aws" {
-  region  = "eu-west-1"
-  version = "~> 2.5"
-}
-
 # don't forget to create IAMs
 module "aws_guardduty_master" {
   source                    = "modules/guardduty-master"
