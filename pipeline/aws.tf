@@ -9,12 +9,13 @@ terraform {
     region         = "eu-west-1"
     dynamodb_table = "tf-state-lock"
     kms_key_id     = "arn:aws:kms:eu-west-1:335823981503:key/925a5b6c-7df1-49a0-a3cc-471e8524637d"
+    profile        = "default"
   }
 }
 
 provider "aws" {
   region              = "eu-west-1"
   version             = "~> 2.6"
-  profile             = "landing"
+  profile             = "default"
   allowed_account_ids = ["335823981503"]
 }
