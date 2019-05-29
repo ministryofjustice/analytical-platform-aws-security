@@ -42,6 +42,8 @@ provider "aws" {
 }
 ```
 
+Here is the AWS Credentials file example  (**~/.aws/credentials**):
+
 ```bash
 [default]
 role_arn = arn:aws:iam:::role/assumed-role
@@ -59,5 +61,5 @@ Apply following commands from this directory:
 ```bash
 terraform init
 terraform plan -out=tfplan
-terraform apply tfplan 
+terraform apply tfplan
 ```
