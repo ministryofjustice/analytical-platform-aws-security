@@ -11,13 +11,14 @@ resource "aws_guardduty_detector" "master" {
 # send invitation to member(s) aws guard duty
 # -----------------------------------------------------------
 
-resource "aws_guardduty_member" "members" {
-  count              = 1
-  account_id         = "${element(var.members_list, count.index)}"
-  detector_id        = "${aws_guardduty_detector.master.id}"
-  email              = "${var.email_invite}"
-  invite             = true
-}
+# TODO: encrypt owner email address before sending invite
+# resource "aws_guardduty_member" "members" {
+#   count              = 3
+#   account_id         = "${element(var.members_list, count.index)}"
+#   detector_id        = "${aws_guardduty_detector.master.id}"
+#   email              = "${var.email_invite}"
+#   invite             = true
+# }
 
 # -----------------------------------------------------------
 # set up AWS Cloudwatch Event rule for Guardduty Findings
