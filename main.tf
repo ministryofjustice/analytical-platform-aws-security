@@ -5,7 +5,7 @@ module "aws_guardduty_master" {
 
 module "aws_guardduty_invite_dev" {
   source                    = "modules/guardduty-invitation"
-  detector_master_id        = "${module.aws_guardduty_master.aws_guardduty_detector.master.id}"
+  detector_master_id        = "${module.aws_guardduty_master.guardduty_master_id}"
   email_member_parameter    = "${var.email_member_parameter_dev}"
   member_account_id         = "${var.ap_accounts["dev"]}"
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
