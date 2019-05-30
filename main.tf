@@ -18,8 +18,8 @@ module "aws_guardduty_member_prod" {
   assume_role_in_account_id = "${var.ap_accounts["prod"]}"
 }
 
-# module "aws_guardduty_member_data" {
-#   source                    = "modules/guardduty-member"
-#   master_account_id         = "${var.ap_accounts["landing"]}"
-#   assume_role_in_account_id = "${var.ap_accounts["data"]}"
-# }
+module "aws_guardduty_member_data" {
+  source                    = "modules/guardduty-member"
+  master_account_id         = "${var.ap_accounts["landing"]}"
+  assume_role_in_account_id = "${var.ap_accounts["data"]}"
+}
