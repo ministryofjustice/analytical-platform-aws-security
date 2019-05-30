@@ -11,10 +11,11 @@ resource "aws_guardduty_detector" "member" {
 # accept invitation from master aws guard duty
 # -----------------------------------------------------------
 
-resource "aws_guardduty_invite_accepter" "member" {
-  detector_id       = "${aws_guardduty_detector.member.id}"
-  master_account_id = "${var.master_account_id}"
-}
+# TODO: encrypt owner email address before receiving invite
+# resource "aws_guardduty_invite_accepter" "member" {
+#   detector_id       = "${aws_guardduty_detector.member.id}"
+#   master_account_id = "${var.master_account_id}"
+# }
 
 # -----------------------------------------------------------
 # set up AWS Cloudwatch Event rule for Guardduty Findings
