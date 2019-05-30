@@ -21,11 +21,6 @@ variable "ap_accounts" {
   type = "map"
 }
 
-variable "members_list" {
-  type    = "list"
-  default = ["525294151996", "312423030077", "593291632749"]
-}
-
-variable "email_invite" {
-  default = "analytics-platform-tech@digital.justice.gov.uk"
+variable "email_member_parameter_dev" {
+  default = "dev-guardduty-member"
 }

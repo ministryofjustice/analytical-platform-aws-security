@@ -8,15 +8,18 @@ variable "assume_role_in_account_id" {
   default     = "335823981503"
 }
 
+variable "member_account_id" {
+  default = "123456723123"
+}
+
 variable "email_invite" {
   default = "kitchen@test.com"
 }
 
-variable "members_list" {
-  default = ["123456789123", "098765432109", "123456789124"]
-  type    = "list"
-}
-
 variable "master_account_id" {
   default = "123456789123"
+}
+
+variable "email_member_parameter_test" {
+  default = "test-guardduty-email"
 }
