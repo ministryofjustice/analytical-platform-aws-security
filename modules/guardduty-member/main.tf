@@ -6,16 +6,22 @@ resource "aws_guardduty_detector" "member" {
   enable                       = true
   finding_publishing_frequency = "${var.publish_frequency}"
 }
+# -----------------------------------------------------------
+# Collect ssm parameters containing email information
+# -----------------------------------------------------------
+
+data "aws_ssm_parameter" "email" {
+  name = "foo"
+}
 
 # -----------------------------------------------------------
 # accept invitation from master aws guard duty
 # -----------------------------------------------------------
 
-# TODO: encrypt owner email address before receiving invite
-# resource "aws_guardduty_invite_accepter" "member" {
-#   detector_id       = "${aws_guardduty_detector.member.id}"
-#   master_account_id = "${var.master_account_id}"
-# }
+resource "aws_guardduty_invite_accepter" "member" {
+  detector_id       = "${aws_guardduty_detector.member.id}"
+  master_account_id = "${var.master_account_id}"
+}
 
 # -----------------------------------------------------------
 # set up AWS Cloudwatch Event rule for Guardduty Findings
