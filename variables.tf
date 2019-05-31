@@ -24,3 +24,11 @@ variable "ap_accounts" {
 variable "email_member_parameter_dev" {
   default = "dev-guardduty-member"
 }
+
+variable "email_member_parameter_prod" {
+  default = "prod-guardduty-member"
+}
+
+variable "email_member_parameter_data" {
+  default = "data-guardduty-member"
+}
