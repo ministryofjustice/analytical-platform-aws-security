@@ -12,7 +12,7 @@ resource "aws_guardduty_detector" "master" {
 # -----------------------------------------------------------
 
 output "guardduty_master_id" {
-  value = "aws_guardduty_detector.master.id"
+  value = "${aws_guardduty_detector.master.id}"
 }
 
 # -----------------------------------------------------------
