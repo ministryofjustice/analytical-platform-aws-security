@@ -3,6 +3,12 @@ module "aws_guardduty_master" {
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 
+module "aws_guardduty_sns_notifications" {
+  source                    = "modules/sns-slack-integration"
+  event_rule                = "${module.aws_guardduty_master.guardduty_event_rule}"
+  assume_role_in_account_id = "${var.ap_accounts["landing"]}"
+}
+
 module "aws_guardduty_invite_dev" {
   source                    = "modules/guardduty-invitation"
   detector_master_id        = "${module.aws_guardduty_master.guardduty_master_id}"

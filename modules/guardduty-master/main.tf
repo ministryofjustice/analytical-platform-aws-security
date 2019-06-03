@@ -60,3 +60,11 @@ resource "aws_cloudwatch_event_rule" "main" {
 }
 PATTERN
 }
+
+# -----------------------------------------------------------
+# Output GuardDuty cloudwatch id
+# -----------------------------------------------------------
+
+output "guardduty_event_rule" {
+  value = "${aws_cloudwatch_event_rule.main.name}"
+}
