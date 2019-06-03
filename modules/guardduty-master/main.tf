@@ -62,21 +62,9 @@ PATTERN
 }
 
 # -----------------------------------------------------------
-# set up AWS Cloudwatch Event to target an sns topic for above event rule
+# Output GuardDuty cloudwatch id
 # -----------------------------------------------------------
 
-resource "aws_sns_topic" "GuardDuty-notifications" {
-  name     = "GuardDuty-notifications"
-}
-
-resource "aws_sns_topic_subscription" "GuardDuty-notifications_sns_subscription" {
-  topic_arn              = "${aws_sns_topic.GuardDuty-notifications.arn}"
-  protocol               = "https"
-  endpoint               = "${var.endpoint}"
-  endpoint_auto_confirms = true
-}
-
-resource "aws_cloudwatch_event_target" "main" {
-  rule      = "${aws_cloudwatch_event_rule.main.name}"
-  arn       = "${aws_sns_topic.GuardDuty-notifications.arn}"
+output "guardduty_event_rule" {
+  value = "${aws_cloudwatch_event_rule.main.name}"
 }

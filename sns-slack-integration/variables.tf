@@ -11,14 +11,16 @@ variable "region" {
   default = "eu-west-1"
 }
 
-variable "publish_frequency" {
-  default = "FIFTEEN_MINUTES"
-}
-
 variable "guardduty_iam_role" {
   default = "terraform-guardduty"
 }
 
-variable "assume_role_in_account_id" {}
+variable "lambda_function_name" {
+  default = "sns_slack_notification"
+}
 
-variable "master_account_id" {}
+variable "filename" {
+  default = "sns_slack_notification_payload.zip"
+}
+
+variable "event_rule" {}
