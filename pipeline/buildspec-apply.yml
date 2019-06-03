@@ -17,7 +17,7 @@ phases:
     commands:
       - cd $CODEBUILD_SRC_DIR
       - terraform init -input=false
-      - zip sns_slack_notification_payload.zip sns-slack-integration/sns_slack_integration.py
+      - zip sns_slack_notification_payload.zip modules/sns-slack-integration/sns_slack_integration.py
       - aws s3 cp s3://$PLAN_BUCKET/tfplan tfplan
       - terraform apply -input=false tfplan
 
