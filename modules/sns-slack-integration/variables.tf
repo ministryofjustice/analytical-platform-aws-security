@@ -18,11 +18,11 @@ variable "guardduty_iam_role" {
 }
 
 variable "lambda_function_name" {
-  default = "sns_slack_notification"
+  default = "guardduty_sns_slack"
 }
 
 variable "filename" {
-  default = "sns_slack_notification_payload.zip"
+  default = "guardduty_sns_slack_payload.zip"
 }
 
 variable "event_rule" {}
