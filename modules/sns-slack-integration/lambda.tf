@@ -1,19 +1,38 @@
+# -----------------------------------------------------------
+# Create IAM Role for SNS Slack lambda
+# -----------------------------------------------------------
+
 resource "aws_iam_role" "sns_slack_lambda_role" {
   name = "sns_slack_lambda_role"
-  assume_role_policy = <<POLICY
+  assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AccessLambdaService",
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": "lambda.amazonaws.com"
       },
-      "Effect": "Allow"
-    },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+# -----------------------------------------------------------
+# Create policy for logging
+# -----------------------------------------------------------
+
+resource "aws_iam_policy" "sns_slack_lambda_logging" {
+  name = "sns_slack_lambda_logging"
+  description = "IAM policy for logging from sns slack lambda"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
     {
-      "Sid": "AccessLogGroup",
       "Action": [
         "logs:CreateLogStream",
         "logs:PutLogEvents"
@@ -23,8 +42,18 @@ resource "aws_iam_role" "sns_slack_lambda_role" {
     }
   ]
 }
-POLICY
+EOF
 }
+
+# -----------------------------------------------------------
+# Attach Logging Policy to SNS Slack Lambda role
+# -----------------------------------------------------------
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role = "${aws_iam_role.sns_slack_lambda_role.name}"
+  policy_arn = "${aws_iam_policy.sns_slack_lambda_logging.arn}"
+}
+
 
 resource "aws_lambda_permission" "with_sns" {
   statement_id  = "AllowExecutionFromSNS"
