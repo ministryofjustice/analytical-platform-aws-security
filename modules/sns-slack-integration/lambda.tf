@@ -3,7 +3,7 @@
 # -----------------------------------------------------------
 
 resource "aws_iam_role" "sns_slack_lambda_role" {
-  name = "sns_slack_lambda_role"
+  name = "${var.sns_slack_lambda_role}"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -26,7 +26,7 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "sns_slack_lambda_logging" {
-  name = "sns_slack_lambda_logging"
+  name = "${var.sns_slack_lambda_logging}"
   description = "IAM policy for logging from sns slack lambda"
   policy = <<EOF
 {
