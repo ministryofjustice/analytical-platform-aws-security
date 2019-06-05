@@ -78,6 +78,18 @@ resource "aws_sns_topic_subscription" "lambda" {
 }
 
 # -----------------------------------------------------------
+# Collect SSM Parameters
+# -----------------------------------------------------------
+
+data "aws_ssm_parameter" "slack_channel" {
+  name = "${var.ssm_slack_channel}"
+}
+
+data "aws_ssm_parameter" "slack_incoming_webhook" {
+  name = "${var.ssm_slack_incoming_webhook}"
+}
+
+# -----------------------------------------------------------
 # set up AWS Cloudwatch Event to target an sns topic event rule
 # -----------------------------------------------------------
 
@@ -95,8 +107,8 @@ resource "aws_lambda_function" "sns_slack_lambda" {
   runtime          = "python3.7"
   environment {
     variables = {
-      SLACK_CHANNEL = "foo"
-      HOOK_URL = "bar"
+      SLACK_CHANNEL = "${data.aws_ssm_parameter.slack_channel.value}"
+      HOOK_URL = "${data.aws_ssm_parameter.slack_incoming_webhook.value}"
     }
   }
 }
