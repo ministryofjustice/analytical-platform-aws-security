@@ -34,9 +34,9 @@ variable "email_member_parameter_data" {
 }
 
 variable "ssm_slack_incoming_webhook" {
-  "landing-guardduty-incoming-webhook"
+  default = "landing-guardduty-incoming-webhook"
 }
 
 variable "ssm_slack_channel" {
-  "landing-guardduty-slack-channel"
+  default = "landing-guardduty-slack-channel"
 }
