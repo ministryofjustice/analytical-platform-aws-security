@@ -34,3 +34,7 @@ variable "sns_slack_lambda_role" {
 variable "sns_slack_lambda_logging" {
   default = "sns-lambda-logging-policy"
 }
+
+variable "ssm_slack_incoming_webhook" {}
+
+variable "ssm_slack_channel" {}
