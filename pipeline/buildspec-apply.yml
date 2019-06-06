@@ -17,7 +17,10 @@ phases:
     commands:
       - cd $CODEBUILD_SRC_DIR
       - terraform init -input=false
-      - zip guardduty-sns-slack-payload.zip modules/sns-slack-integration/sns_slack_integration.py
+      - cd modules/sns-slack-integration/
+      - zip -r ../guardduty-sns-slack-payload.zip sns_slack_integration.py
+      - cd $CODEBUILD_SRC_DIR
+      - mv modules/guardduty-sns-slack-payload.zip .
       - aws s3 cp s3://$PLAN_BUCKET/tfplan tfplan
       - terraform apply -input=false tfplan
 
