@@ -19,7 +19,7 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
   logger.info("Event: " + str(event))
-  message = event['Records'][0]['Sns']['Subject'] + '\n' + event['Records'][0]['Sns']['Message']
+  message = str(event['Records'][0]['Sns']['Subject']) + '\n' + str(event['Records'][0]['Sns']['Message'])
   try:
       message = json.loads(message)
   except Exception as e:
