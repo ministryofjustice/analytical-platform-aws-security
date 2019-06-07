@@ -109,7 +109,7 @@ resource "aws_cloudwatch_event_rule" "main" {
       6.6,
       6.7,
       6.8,
-      6.9
+      6.9,
       7,
       7.0,
       7.1,
