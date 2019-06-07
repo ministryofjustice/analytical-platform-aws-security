@@ -30,17 +30,17 @@ def lambda_handler(event, context):
           severity_message = ":warning: MEDIUM"
       elif 7 <= severity:
           severity_message = ":fire: HIGH"
-      message = ":amazon: AWS Account: {} Time: {} \n".format(loaded_json['account'], loaded_json['time'])
-      message = "Alert level: {} \n".format(severity_message)
-      message = "{}Type: {}\n".format(message, loaded_json['detail']['type'])
-      message = "{}Title: {}\n".format(message, loaded_json['detail']['title'])
-      message = "{}Description: {}\n".format(message, loaded_json['detail']['description'])
-      message = "{}Severity: {} {}\n".format(message, loaded_json['detail']['severity'], severity_message)
-      message = "{}Event First Seen: {}\n".format(message, loaded_json['detail']['service']['eventFirstSeen'])
-      message = "{}Event Last Seen: {}\n".format(message, loaded_json['detail']['service']['eventLastSeen'])
-      message = "{}Target Resource: {}\n".format(message, json.dumps(loaded_json['detail']['resource']))
-      message = "{}Action: {}\n".format(message, json.dumps(loaded_json['detail']['service']['action']))
-      message = "{}Additional information: {}\n".format(message, json.dumps(loaded_json['detail']['service']['additionalInfo']))
+      message = ":amazon: *AWS Account:* {} *Time:* {} \n".format(loaded_json['account'], loaded_json['time'])
+      message = "{}*Alert level:* {} \n".format(message, severity_message)
+      message = "{}*Type:* {}\n".format(message, loaded_json['detail']['type'])
+      message = "{}*Title:* {}\n".format(message, loaded_json['detail']['title'])
+      message = "{}*Description:* {}\n".format(message, loaded_json['detail']['description'])
+      message = "{}*Severity:* {}\n".format(message, loaded_json['detail']['severity'])
+      message = "{}*Event First Seen:* {}\n".format(message, loaded_json['detail']['service']['eventFirstSeen'])
+      message = "{}*Event Last Seen:* {}\n".format(message, loaded_json['detail']['service']['eventLastSeen'])
+      message = "{}*Target Resource:* {}\n".format(message, json.dumps(loaded_json['detail']['resource']))
+      message = "{}*Action:* {}\n".format(message, json.dumps(loaded_json['detail']['service']['action']))
+      message = "{}*Additional information:* {}\n".format(message, json.dumps(loaded_json['detail']['service']['additionalInfo']))
   except Exception as e:
       print(e)
   logger.info("Message: " + str(message))
