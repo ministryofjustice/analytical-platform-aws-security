@@ -19,15 +19,25 @@ logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
   logger.info("Event: " + str(event))
-  message = str(event['Records'][0]['Sns']['Subject']) + '\n' + str(event['Records'][0]['Sns']['Message'])
+  json_message = event['Records'][0]['Sns']['Message']
   try:
-      message = json.loads(message)
+      loaded_json = json.loads(json_message)
+      message = ":amazon: AWS Account: {} Time: {} \n".format(loaded_json['account'], loaded_json['time'])
+      message = "{}Type: {}\n".format(message, loaded_json['detail']['type'])
+      message = "{}Title: {}\n".format(message, loaded_json['detail']['title'])
+      message = "{}Description: {}\n".format(message, loaded_json['detail']['descriptions'])
+      message = "{}Severity: {}\n".format(message, loaded_json['detail']['severity'])
+      message = "{}Event First Seen: {}\n".format(message, loaded_json['detail']['service']['eventFirstSeen'])
+      message = "{}Event Last Seen: {}\n".format(message, loaded_json['detail']['service']['eventLastSeen'])
+      message = "{}Target Resource: {}\n".format(message, json.dumps(loaded_json['detail']['resource']))
+      message = "{}Action: {}\n".format(message, json.dumps(loaded_json['detail']['service']['action']))
+      message = "{}Additional information: {}\n".format(message, json.dumps(loaded_json['detail']['service']['additionalInfo']))
   except Exception as e:
       print(e)
   logger.info("Message: " + str(message))
   slack_message = {
       'channel': slack_channel,
-      'username': "AWSSlack",
+      'username': "AWS GuardDuty",
       'text': message,
       'icon_emoji' : ":guardsman:"
   }
