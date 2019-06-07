@@ -25,7 +25,7 @@ def lambda_handler(event, context):
       message = ":amazon: AWS Account: {} Time: {} \n".format(loaded_json['account'], loaded_json['time'])
       message = "{}Type: {}\n".format(message, loaded_json['detail']['type'])
       message = "{}Title: {}\n".format(message, loaded_json['detail']['title'])
-      message = "{}Description: {}\n".format(message, loaded_json['detail']['descriptions'])
+      message = "{}Description: {}\n".format(message, loaded_json['detail']['description'])
       message = "{}Severity: {}\n".format(message, loaded_json['detail']['severity'])
       message = "{}Event First Seen: {}\n".format(message, loaded_json['detail']['service']['eventFirstSeen'])
       message = "{}Event Last Seen: {}\n".format(message, loaded_json['detail']['service']['eventLastSeen'])
