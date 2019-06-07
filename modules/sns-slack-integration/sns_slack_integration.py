@@ -22,11 +22,20 @@ def lambda_handler(event, context):
   json_message = event['Records'][0]['Sns']['Message']
   try:
       loaded_json = json.loads(json_message)
+      severity = float(loaded_json['detail']['severity'])
+      severity_message = ""
+      if severity < 4:
+          severity_message = ":large_blue_circle: LOW"
+      elif 4 <= severity < 7:
+          severity_message = ":warning: MEDIUM"
+      elif 7 <= severity:
+          severity_message = ":fire: HIGH"
       message = ":amazon: AWS Account: {} Time: {} \n".format(loaded_json['account'], loaded_json['time'])
+      message = "Alert level: {} \n".format(severity_message)
       message = "{}Type: {}\n".format(message, loaded_json['detail']['type'])
       message = "{}Title: {}\n".format(message, loaded_json['detail']['title'])
       message = "{}Description: {}\n".format(message, loaded_json['detail']['description'])
-      message = "{}Severity: {}\n".format(message, loaded_json['detail']['severity'])
+      message = "{}Severity: {} {}\n".format(message, loaded_json['detail']['severity'], severity_message)
       message = "{}Event First Seen: {}\n".format(message, loaded_json['detail']['service']['eventFirstSeen'])
       message = "{}Event Last Seen: {}\n".format(message, loaded_json['detail']['service']['eventLastSeen'])
       message = "{}Target Resource: {}\n".format(message, json.dumps(loaded_json['detail']['resource']))
