@@ -37,7 +37,7 @@ POLICY
 
 resource "aws_config_delivery_channel" "delivery_channel" {
   name                = "aws-config-delivery-channel"
-  s3_bucket_name      = "${aws_s3_bucket.bucket.bucket}"
+  s3_bucket_name      = "${aws_s3_bucket.awsconfigbucket.bucket}"
   depends_on          = ["aws_config_configuration_recorder.recorder"]
 }
 
@@ -51,7 +51,7 @@ resource "aws_config_configuration_recorder_status" "recorder_status" {
 # Bucket for AWS Config
 # -----------------------------------------------------------
 
-resource "aws_s3_bucket" "bucket" {
+resource "aws_s3_bucket" "awsconfigbucket" {
   bucket              = "aws-config-service-s3bucket"
   acl                 = "private"
   versioning {
@@ -85,8 +85,8 @@ resource "aws_iam_policy" "config_s3_policy" {
       ],
       "Effect": "Allow",
       "Resource": [
-        "${aws_s3_bucket.bucket.arn}",
-        "${aws_s3_bucket.bucket.arn}/*"
+        "${aws_s3_bucket.awsconfigbucket.arn}",
+        "${aws_s3_bucket.awsconfigbucket.arn}/*"
       ]
     }
   ]
