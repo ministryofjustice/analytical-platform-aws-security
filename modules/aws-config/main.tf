@@ -73,7 +73,7 @@ resource "aws_s3_bucket" "awsconfigbucket" {
 # Bucket for AWS Config
 # -----------------------------------------------------------
 
-resource "aws_iam_policy" "config_s3_policy" {
+resource "aws_iam_policy" "s3_config_policy" {
   name = "awsconfig-bucket-access"
   policy = <<POLICY
 {
@@ -101,5 +101,5 @@ resource "aws_iam_role_policy_attachment" "aws_config" {
 
 resource "aws_iam_role_policy_attachment" "config_s3_policy" {
   role                = "${aws_iam_role.config.name}"
-  policy_arn          = "${aws_iam_policy.config_s3_policy.arn}"
+  policy_arn          = "${aws_iam_policy.s3_config_policy.arn}"
 }
