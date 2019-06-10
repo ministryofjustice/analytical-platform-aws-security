@@ -7,6 +7,8 @@ provider "aws" {
   }
 }
 
+variable "assume_role_in_account_id" {}
+
 variable "region" {
   default = "eu-west-1"
 }
