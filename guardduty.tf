@@ -4,7 +4,7 @@ module "aws_guardduty_master" {
 }
 
 module "aws_guardduty_sns_notifications" {
-  source                     = "modules/sns-slack-integration"
+  source                     = "modules/sns-guardduty-slack"
   event_rule                 = "${module.aws_guardduty_master.guardduty_event_rule}"
   ssm_slack_channel          = "${var.ssm_slack_channel}"
   ssm_slack_incoming_webhook = "${var.ssm_slack_incoming_webhook}"

@@ -127,7 +127,7 @@ resource "aws_lambda_function" "sns_slack_lambda" {
   filename         = "${var.filename}"
   function_name    = "${var.lambda_function_name}"
   role             = "${aws_iam_role.sns_slack_lambda_role.arn}"
-  handler          = "sns_slack_integration.lambda_handler"
+  handler          = "sns_guardduty_slack.lambda_handler"
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   environment {
