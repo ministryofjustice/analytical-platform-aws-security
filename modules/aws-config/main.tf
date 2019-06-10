@@ -38,7 +38,6 @@ POLICY
 resource "aws_config_delivery_channel" "delivery_channel" {
   name                = "aws-config-delivery-channel"
   s3_bucket_name      = "${aws_s3_bucket.bucket.bucket}"
-  sns_topic_arn       = "${aws_sns_topic.notification.arn}"
   depends_on          = ["aws_config_configuration_recorder.recorder"]
 }
 
