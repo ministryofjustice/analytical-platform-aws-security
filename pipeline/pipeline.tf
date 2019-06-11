@@ -2,7 +2,7 @@ data "aws_iam_policy_document" "codebuild_policy" {
   statement {
     sid = "assumeLandingRole"
     actions = ["sts:AssumeRole"]
-    resources = ["arn:aws:iam::*:role/terraform-guardduty"]
+    resources = ["arn:aws:iam::*:role/terraform-aws-security"]
   }
 }
 
