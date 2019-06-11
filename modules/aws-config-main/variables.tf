@@ -16,3 +16,5 @@ variable "region" {
 variable "aws_security_iam_role" {
   default = "terraform-aws-security"
 }
+
+variable "environment" {}

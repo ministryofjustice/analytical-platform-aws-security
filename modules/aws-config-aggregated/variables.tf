@@ -18,3 +18,5 @@ variable "aws_security_iam_role" {
 }
 
 variable "main_aws_config_account_id" {}
+
+variable "environment" {}
