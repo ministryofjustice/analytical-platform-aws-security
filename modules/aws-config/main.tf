@@ -103,3 +103,16 @@ resource "aws_iam_role_policy_attachment" "config_s3_policy" {
   role                = "${aws_iam_role.config.name}"
   policy_arn          = "${aws_iam_policy.s3_config_policy.arn}"
 }
+
+# -----------------------------------------------------------
+# AWS Config Rules
+# -----------------------------------------------------------
+
+resource "aws_config_config_rule" "root_account_mfa_enabled" {
+  name                = "root_account_mfa_enabled"
+  source {
+    owner             = "AWS"
+    source_identifier = "ROOT_ACCOUNT_MFA_ENABLED"
+  }
+  depends_on          = ["aws_config_configuration_recorder.recorder"]
+}
