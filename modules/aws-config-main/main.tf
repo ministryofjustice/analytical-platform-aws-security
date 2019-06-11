@@ -52,7 +52,7 @@ resource "aws_config_configuration_recorder_status" "recorder_status" {
 # -----------------------------------------------------------
 
 resource "aws_s3_bucket" "awsconfigbucket" {
-  bucket              = "aws-config-service-s3bucket"
+  bucket              = "aws-config-s3bucket-${assume_role_in_account_id}"
   acl                 = "private"
   versioning {
     enabled = true
@@ -70,7 +70,7 @@ resource "aws_s3_bucket" "awsconfigbucket" {
 }
 
 # -----------------------------------------------------------
-# Bucket for AWS Config
+# Bucket Policy for AWS Config
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "s3_config_policy" {
@@ -117,16 +117,6 @@ resource "aws_config_config_rule" "root_account_mfa_enabled" {
   depends_on          = ["aws_config_configuration_recorder.recorder"]
 }
 
-resource "aws_config_config_rule" "root_account_hardware_mfa_enabled" {
-  count = 0
-  name                = "root_account_hardware_mfa_enabled"
-  source {
-    owner             = "AWS"
-    source_identifier = "ROOT_ACCOUNT_HARDWARE_MFA_ENABLED"
-  }
-  depends_on          = ["aws_config_configuration_recorder.recorder"]
-}
-
 resource "aws_config_config_rule" "cloud_trail_enabled" {
   name                = "cloud_trail_enabled"
   source {
@@ -141,36 +131,6 @@ resource "aws_config_config_rule" "cloud-trail-cloud-watch-logs-enabled" {
   source {
     owner             = "AWS"
     source_identifier = "CLOUD_TRAIL_CLOUD_WATCH_LOGS_ENABLED"
-  }
-  depends_on          = ["aws_config_configuration_recorder.recorder"]
-}
-
-resource "aws_config_config_rule" "vpc-flow-logs-enabled" {
-  count = 0
-  name                = "vpc-flow-logs-enabled"
-  source {
-    owner             = "AWS"
-    source_identifier = "VPC_FLOW_LOGS_ENABLED"
-  }
-  depends_on          = ["aws_config_configuration_recorder.recorder"]
-}
-
-resource "aws_config_config_rule" "cloud-trail-encryption-enabled" {
-  count = 0
-  name                = "cloud-trail-encryption-enabled"
-  source {
-    owner             = "AWS"
-    source_identifier = "CLOUD_TRAIL_ENCRYPTION_ENABLED"
-  }
-  depends_on          = ["aws_config_configuration_recorder.recorder"]
-}
-
-resource "aws_config_config_rule" "cloud-trail-log-file-validation-enabled" {
-  count = 0
-  name                = "cloud-trail-log-file-validation-enabled"
-  source {
-    owner             = "AWS"
-    source_identifier = "CLOUD_TRAIL_LOG_FILE_VALIDATION_ENABLED"
   }
   depends_on          = ["aws_config_configuration_recorder.recorder"]
 }
