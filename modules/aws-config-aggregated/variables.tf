@@ -17,6 +17,5 @@ variable "aws_security_iam_role" {
   default = "terraform-aws-security"
 }
 
-variable "main_aws_config_account_id" {}
 
 variable "environment" {}

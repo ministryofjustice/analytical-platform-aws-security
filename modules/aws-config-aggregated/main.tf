@@ -108,19 +108,6 @@ resource "aws_iam_role_policy_attachment" "config_s3_policy" {
 # AWS Config Rules
 # -----------------------------------------------------------
 
-resource "aws_config_configuration_aggregator" "account" {
-  name = "landing-aws-config"
-  account_aggregation_source {
-    account_ids = ["${var.main_aws_config_account_id}"]
-    regions     = ["${var.region}"]
-  }
-}
-
-
-# -----------------------------------------------------------
-# AWS Config Rules
-# -----------------------------------------------------------
-
 resource "aws_config_config_rule" "root_account_mfa_enabled" {
   name                = "root_account_mfa_enabled"
   source {
