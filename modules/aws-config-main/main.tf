@@ -52,7 +52,7 @@ resource "aws_config_configuration_recorder_status" "recorder_status" {
 # -----------------------------------------------------------
 
 resource "aws_s3_bucket" "awsconfigbucket" {
-  bucket              = "aws-config-s3bucket-${var.assume_role_in_account_id}"
+  bucket              = "aws-config-s3bucket-${var.environment}"
   acl                 = "private"
   versioning {
     enabled = true
