@@ -105,6 +105,26 @@ resource "aws_iam_role_policy_attachment" "config_s3_policy" {
 }
 
 # -----------------------------------------------------------
+# AWS Config Rules aggregator
+# -----------------------------------------------------------
+
+resource "aws_config_configuration_aggregator" "dev_account" {
+  name = "dev-aws-config"
+  account_aggregation_source {
+    account_ids = ["${var.dev_aws_config_account_id}"]
+    regions     = ["${var.region}"]
+  }
+}
+
+resource "aws_config_configuration_aggregator" "prod_account" {
+  name = "prod-aws-config"
+  account_aggregation_source {
+    account_ids = ["${var.prod_aws_config_account_id}"]
+    regions     = ["${var.region}"]
+  }
+}
+
+# -----------------------------------------------------------
 # AWS Config Rules
 # -----------------------------------------------------------
 
