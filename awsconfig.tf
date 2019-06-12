@@ -21,12 +21,12 @@ module "aws-config-aggregated-prod" {
 
 module "aws-config-authorization-dev" {
   source                     = "modules/aws-config-authorized"
-  aggregated_account_id      = "${var.ap_accounts["dev"]}"
-  assume_role_in_account_id  = "${var.ap_accounts["landing"]}"
+  aggregated_account_id      = "${var.ap_accounts["landing"]}"
+  assume_role_in_account_id  = "${var.ap_accounts["dev"]}"
 }
 
 module "aws-config-authorization-prod" {
   source                     = "modules/aws-config-authorized"
-  aggregated_account_id      = "${var.ap_accounts["prod"]}"
-  assume_role_in_account_id  = "${var.ap_accounts["landing"]}"
+  aggregated_account_id      = "${var.ap_accounts["landing"]}"
+  assume_role_in_account_id  = "${var.ap_accounts["prod"]}"
 }
