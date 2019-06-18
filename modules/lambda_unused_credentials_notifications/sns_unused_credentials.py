@@ -51,7 +51,6 @@ def list_users(client):
     """
     List all users
     """
-    print(client.list_users(MaxItems=500)['Users'])
     return client.list_users(MaxItems=500)['Users']
 
 def user_excluded_pw_check(client, user):
@@ -94,7 +93,6 @@ def list_groups(client, user):
     """
     Lists the IAM groups that the specified IAM user belongs to
     """
-    print(client.list_groups_for_user(UserName=user['UserName'])['Groups'])
     return client.list_groups_for_user(UserName=user['UserName'])['Groups']
 
 def check_admin_group_policy(client, group):
@@ -110,7 +108,6 @@ def attached_group_policy(client, group):
     """
     Lists the IAM groups that the specified IAM user belongs to
     """
-    print(client.list_attached_group_policies(GroupName=group['GroupName']))
     return client.list_attached_group_policies(GroupName=group['GroupName'])['AttachedPolicies']
 
 def check_admin_user_policy(client, user):
@@ -126,14 +123,12 @@ def attached_user_policy(client, user):
     """
     Lists all managed policies that are attached to the specified IAM user.
     """
-    print(client.list_attached_user_policies(UserName=user['UserName']))
     return client.list_attached_user_policies(UserName=user['UserName'])['AttachedPolicies']
 
 def list_keys(client, user):
     """
     Returns information about the access key IDs associated with the specified IAM user.
     """
-    print(client.list_access_keys(UserName=user['UserName'])['AccessKeyMetadata'])
     return client.list_access_keys(UserName=user['UserName'])['AccessKeyMetadata']
 
 def age_exceed_threshold(age):
@@ -146,7 +141,6 @@ def key_last_used(client, access_key):
     """
     Retrieves information about when the specified access key was last used.
     """
-    print(client.get_access_key_last_used(AccessKeyId=access_key['AccessKeyId']))
     return client.get_access_key_last_used(AccessKeyId=access_key['AccessKeyId'])
 
 def credentials_age(now, aws_date):
@@ -195,7 +189,6 @@ def last_used_date_exceed(now, key_last_date):
     """
     Return True if access_key exceed threshold
     """
-    print(key_last_date)
     access_key_last_used_date = extract_date(key_last_date['AccessKeyLastUsed']['LastUsedDate'])
     age = credentials_age(now, access_key_last_used_date)
     if age_exceed_threshold(age):

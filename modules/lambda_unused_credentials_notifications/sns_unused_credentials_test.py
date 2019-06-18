@@ -42,19 +42,19 @@ def test_list_keys():
     assert status == ('Active')
     assert status1 == ('Active')
 
-# @mock_iam()
-# def test_key_last_used():
-#     iam = boto3.resource('iam')
-#     client = iam.meta.client
-#     username = 'test-user'
-#     iam.create_user(UserName=username)
-#     create_key_response = client.create_access_key(UserName=username)['AccessKey']
-#     resp = sns_unused_credentials.key_last_used(client, create_key_response)
-#     assert datetime.strftime(resp["AccessKeyLastUsed"]["LastUsedDate"], "%Y-%m-%d") == datetime.strftime(
-#         datetime.utcnow(),
-#         "%Y-%m-%d"
-#     )
-#     assert resp["UserName"] == create_key_response["UserName"]
+@mock_iam()
+def test_key_last_used():
+    iam = boto3.resource('iam')
+    client = iam.meta.client
+    username = 'test-user'
+    iam.create_user(UserName=username)
+    create_key_response = client.create_access_key(UserName=username)['AccessKey']
+    resp = sns_unused_credentials.key_last_used(client, create_key_response)
+    assert datetime.strftime(resp["AccessKeyLastUsed"]["LastUsedDate"], "%Y-%m-%d") == datetime.strftime(
+        datetime.utcnow(),
+        "%Y-%m-%d"
+    )
+    assert resp["UserName"] == create_key_response["UserName"]
 
 @mock_iam()
 def test_user_date_created():
