@@ -121,7 +121,7 @@ def check_admin_user_policy(client, user):
 
 def attached_user_policy(client, user):
     """
-    Lists all managed policies that are attached to the specified IAM user.
+    Lists all policies that are attached to the specified IAM user.
     """
     return client.list_attached_user_policies(UserName=user['UserName'])['AttachedPolicies']
 
@@ -145,13 +145,13 @@ def key_last_used(client, access_key):
 
 def credentials_age(now, aws_date):
     """
-    Return  number of days between now and date sent
+    Return number of days between now and date sent
     """
     return (now - aws_date).days
 
 def password_last_used_present(user):
     """
-    Return True if user has used his/her password
+    Return User if user has used his/her password
     """
     if 'PasswordLastUsed' in user:
         return user
@@ -159,7 +159,7 @@ def password_last_used_present(user):
 
 def password_last_used_exceed(now, user):
     """
-    Return True if user password exceed threshold
+    Return User if user password exceed threshold
     """
     if password_last_used_present(user):
         password_last_used = extract_date(user['PasswordLastUsed'])
@@ -178,7 +178,7 @@ def access_key_active(access_key):
 
 def last_used_date_absent(key_last_date):
     """
-    Return True if last_used_date present
+    Return Username if last_used_date present
     """
     if not 'LastUsedDate' in key_last_date:
         return key_last_date['UserName']
@@ -187,7 +187,7 @@ def last_used_date_absent(key_last_date):
 
 def last_used_date_exceed(now, key_last_date):
     """
-    Return True if access_key exceed threshold
+    Return Username if access_key exceed threshold
     """
     access_key_last_used_date = extract_date(key_last_date['AccessKeyLastUsed']['LastUsedDate'])
     age = credentials_age(now, access_key_last_used_date)
