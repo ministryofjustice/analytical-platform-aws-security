@@ -17,12 +17,8 @@ phases:
     commands:
       - cd $CODEBUILD_SRC_DIR
       - terraform init -input=false
-      - cd modules/lambda-unused-credentials/
-      - zip -r ../lambda-unused-credentials.zip sns_unused_credentials.py
-      - cd $CODEBUILD_SRC_DIR
-      - cd modules/sns-guardduty-slack/
-      - zip -r ../guardduty-sns-slack-payload.zip sns_guardduty_slack.py
-      - cd $CODEBUILD_SRC_DIR
+      - cd modules/
+      - ./python_packages.sh
       - mv modules/guardduty-sns-slack-payload.zip .
       - aws s3 cp s3://$PLAN_BUCKET/tfplan tfplan
       - terraform apply -input=false tfplan
