@@ -13,25 +13,27 @@ set -o pipefail
 set -o nounset
 
 function install_packages() {
-  pushd lambda-unused-credentials
-  pip install -r requirements*.txt
-  popd
+  pip install -r requirements_test.txt
 }
 
 function zip_python() {
   pushd lambda-unused-credentials/
   zip -r ../lambda-unused-credentials.zip sns_unused_credentials.py
   popd
+  mv lambda-unused-credentials.zip ../
   pushd sns-guardduty-slack/
   zip -r ../guardduty-sns-slack-payload.zip sns_guardduty_slack.py
   popd
+  mv lambda-unused-credentials.zip ../
 }
 
 function test_python() {
-
   pushd lambda-unused-credentials/
   pylint sns_unused_credentials.py
   pytest .
+  popd
+  pushd sns-guardduty-slack/
+  pylint sns_guardduty_slack.py
   popd
 }
 
