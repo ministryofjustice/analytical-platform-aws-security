@@ -3,7 +3,7 @@
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_rule" "schedule" {
-  schedule_expression = cron(0 9 * * 1-5 *)
+  schedule_expression = "cron(0 9 * * 1-5 *)"
 }
 
 # -----------------------------------------------------------
