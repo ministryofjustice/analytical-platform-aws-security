@@ -24,7 +24,7 @@ function zip_python() {
   pushd sns-guardduty-slack/
   zip -r ../guardduty-sns-slack-payload.zip sns_guardduty_slack.py
   popd
-  mv lambda-unused-credentials.zip ../
+  mv guardduty-sns-slack-payload.zip ../
 }
 
 function test_python() {
