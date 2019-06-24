@@ -4,7 +4,7 @@
 
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "event-invoke-lambda"
-  schedule_expression = "cron(0 9 * * MON-FRI *)"
+  schedule_expression = "cron(0 9 ? * MON-FRI *)"
 }
 
 # -----------------------------------------------------------
