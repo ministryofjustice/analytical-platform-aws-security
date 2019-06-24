@@ -127,7 +127,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 # Attach iam Policy to Lambda role
 # -----------------------------------------------------------
 
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
+resource "aws_iam_role_policy_attachment" "lambda_iam" {
   role = "${aws_iam_role.lambda_unused_credentials_role.name}"
   policy_arn = "${aws_iam_policy.readonly_iam_policy.arn}"
 }
