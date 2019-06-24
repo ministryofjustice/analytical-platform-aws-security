@@ -18,7 +18,7 @@ variable "aws_security_iam_role" {
 }
 
 variable "filename" {
-  default = "lambda-unused-credentials"
+  default = "lambda-unused-credentials.zip"
 }
 
 variable "lambda_function_name" {
