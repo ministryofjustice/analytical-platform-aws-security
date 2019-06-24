@@ -3,10 +3,12 @@ Function: DisableUnusedCredentials
 Purpose:  Disables unused access keys older than the given period.
 """
 import datetime
+import os
 import boto3
 
 DEFAULT_AGE_THRESHOLD_IN_DAYS = 120
 CREATE_DATE_AGE_THRESHOLD_IN_DAYS = 7
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 
 def lambda_handler():
     """
@@ -235,4 +237,4 @@ def sns_send_notifications(**kwargs):
     )
     for username in kwargs['key_exceed']:
         message_body += '\n Username: {}'.format(username)
-    sns_client.publish(TopicArn="sns_topic_arn", Message=message_body, Subject=subject)
+    sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
