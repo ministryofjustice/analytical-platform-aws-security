@@ -47,3 +47,7 @@ variable "stack_name" {
 variable "ssm_unused_credentials_emails" {
   default = "unused_credentials_emails_list"
 }
+
+variable "display_name" {
+  default = "noreply@example.com"
+}
