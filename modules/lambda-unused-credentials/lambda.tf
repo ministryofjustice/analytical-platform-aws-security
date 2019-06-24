@@ -7,6 +7,29 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 }
 
 # -----------------------------------------------------------
+# Create IAM Role for unused credentials lambda
+# -----------------------------------------------------------
+
+resource "aws_iam_role" "lambda_unused_credentials_role" {
+  name = "${var.lambda_unused_credentials_role}"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+# -----------------------------------------------------------
 # set up AWS Cloudwatch Event to target a lambda function
 # -----------------------------------------------------------
 
