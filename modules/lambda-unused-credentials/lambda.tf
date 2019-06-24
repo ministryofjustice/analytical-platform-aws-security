@@ -91,12 +91,45 @@ EOF
 }
 
 # -----------------------------------------------------------
+# READONLY IAM policy
+# -----------------------------------------------------------
+
+resource "aws_iam_policy" "readonly_iam_policy" {
+  name = "${var.readonly_iam_policy}"
+  description = "IAM policy for logging from lambda"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "iam:Get*",
+        "iam:List*"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+# -----------------------------------------------------------
 # Attach Logging Policy to Lambda role
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role = "${aws_iam_role.lambda_unused_credentials_role.name}"
   policy_arn = "${aws_iam_policy.unused_credentials_log_policy.arn}"
+}
+
+# -----------------------------------------------------------
+# Attach iam Policy to Lambda role
+# -----------------------------------------------------------
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role = "${aws_iam_role.lambda_unused_credentials_role.name}"
+  policy_arn = "${aws_iam_policy.readonly_iam_policy.arn}"
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
