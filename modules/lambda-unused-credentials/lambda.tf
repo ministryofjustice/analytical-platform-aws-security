@@ -3,6 +3,7 @@
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_rule" "schedule" {
+  name                = "event-invoke-lambda"
   schedule_expression = "cron(0 9 * * 1-5 *)"
 }
 
@@ -34,7 +35,7 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_target" "main" {
-  rule      = "${aws_cloudwatch_event_rule.schedule}"
+  rule      = "${aws_cloudwatch_event_rule.schedule.name}"
   arn       = "${aws_lambda_function.lambda_unused_credentials.arn}"
 }
 
