@@ -46,6 +46,7 @@ resource "aws_lambda_function" "lambda_unused_credentials" {
   handler          = "sns_unused_credentials.lambda_handler"
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
+  timeout          = "300"
   environment {
     variables = {
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
@@ -88,6 +89,31 @@ resource "aws_iam_policy" "unused_credentials_log_policy" {
   ]
 }
 EOF
+}
+
+# -----------------------------------------------------------
+# Create policy for CloudWatch Event - SNS
+# -----------------------------------------------------------
+
+data "aws_iam_policy_document" "sns_topic_policy" {
+  statement {
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+    resources = ["${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"]
+  }
+}
+
+# -----------------------------------------------------------
+# Attach Policy to SNS
+# -----------------------------------------------------------
+
+resource "aws_sns_topic_policy" "default" {
+  arn    = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
+  policy = "${data.aws_iam_policy_document.sns_topic_policy.json}"
 }
 
 # -----------------------------------------------------------

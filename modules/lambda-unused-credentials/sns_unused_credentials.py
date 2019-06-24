@@ -4,16 +4,20 @@ Purpose:  Disables unused access keys older than the given period.
 """
 import datetime
 import os
+import logging
 import boto3
 
 DEFAULT_AGE_THRESHOLD_IN_DAYS = 120
 CREATE_DATE_AGE_THRESHOLD_IN_DAYS = 7
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.INFO)
 
-def lambda_handler():
+def lambda_handler(event, _):
     """
     Main method listing users and access_keys, compare and notify
     """
+    LOGGER.info("Event: %s", event)
     client = boto3.client('iam')
     users = list_users(client)
     now = extract_date(datetime.date.today())
@@ -25,7 +29,7 @@ def lambda_handler():
     password_never_used = []
     for user in users:
         list_user_keys = list_keys(client, user)
-        if user_excluded_pw_check(client, user) is not None:
+        if user_excluded_pw_check(client, now, user) is not None:
             excluded_users.append(user)
         for access_key in list_user_keys:
             if not user_excluded_key_check(access_key, now) is not None:
@@ -55,12 +59,13 @@ def list_users(client):
     """
     return client.list_users(MaxItems=500)['Users']
 
-def user_excluded_pw_check(client, user):
+def user_excluded_pw_check(client, now, user):
     """
     Check if users should be excluded from a password check
     """
-    age = user_date_created(client, user)
-    if new_user(age) or admin_user(client, user):
+    user_create_date = extract_date(user_date_created(client, user))
+    user_age = credentials_age(now, user_create_date)
+    if new_user(user_age) or admin_user(client, user):
         return user
     return None
 
