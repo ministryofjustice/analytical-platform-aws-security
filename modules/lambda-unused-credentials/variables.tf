@@ -29,6 +29,10 @@ variable "lambda_unused_credentials_role" {
   default = "lambda-unused-credentials-role"
 }
 
+variable "unused_credentials_log_policy" {
+  default = "unused-credentials-log-policy"
+}
+
 variable "protocol" {
   default     = "email"
   description = "SNS Protocol to use. email or email-json"
