@@ -33,6 +33,10 @@ variable "unused_credentials_log_policy" {
   default = "unused-credentials-log-policy"
 }
 
+variable "readonly_iam_policy" {
+  default = "unused-credentials-iam-policy"
+}
+
 variable "protocol" {
   default     = "email"
   description = "SNS Protocol to use. email or email-json"
