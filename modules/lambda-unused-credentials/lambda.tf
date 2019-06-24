@@ -34,7 +34,7 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_target" "main" {
-  rule      = "${var.schedule}"
+  rule      = "${aws_cloudwatch_event_rule.schedule}"
   arn       = "${aws_lambda_function.lambda_unused_credentials.arn}"
 }
 
