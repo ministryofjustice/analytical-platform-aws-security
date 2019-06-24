@@ -48,7 +48,7 @@ resource "aws_lambda_function" "lambda_unused_credentials" {
   runtime          = "python3.7"
   environment {
     variables = {
-      SNS_TOPIC_ARN = "${sns_topic_arn}"
+      SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
     }
   }
 }
