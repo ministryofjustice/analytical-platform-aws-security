@@ -50,6 +50,7 @@ resource "aws_lambda_function" "lambda_unused_credentials" {
   environment {
     variables = {
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
+      AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
     }
   }
 }

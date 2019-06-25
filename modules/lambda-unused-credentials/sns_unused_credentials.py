@@ -10,6 +10,7 @@ import boto3
 DEFAULT_AGE_THRESHOLD_IN_DAYS = 120
 CREATE_DATE_AGE_THRESHOLD_IN_DAYS = 7
 SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
+AWS_ACCOUNT = os.getenv('AWS_ACCOUNT')
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
@@ -219,7 +220,7 @@ def sns_send_notifications(**kwargs):
     Send sns notification
     """
     sns_client = boto3.client('sns', region_name='eu-west-1')
-    subject = 'AWS Account - Inactive User List '
+    subject = 'AWS Account {} - Inactive User List'.format(AWS_ACCOUNT)
     len_pw_exceed = len(kwargs['password_exceed'])
     len_key_never_used = len(kwargs['key_never_used'])
     len_key_exceed = len(kwargs['key_exceed'])
