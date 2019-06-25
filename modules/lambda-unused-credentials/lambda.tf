@@ -185,6 +185,6 @@ data "template_file" "cloudformation_sns_stack" {
   template = "${file("${path.module}/email-sns-stack.json.tpl")}"
   vars {
     display_name  = "${var.display_name}"
-    subscriptions = "${join("," , formatlist("{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" }", list(data.aws_ssm_parameter.unused_credentials_emails.value), list(var.protocol)))}"
+    subscriptions = "${join("," , formatlist("\{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" \}", data.aws_ssm_parameter.unused_credentials_emails.value, var.protocol))}"
   }
 }
