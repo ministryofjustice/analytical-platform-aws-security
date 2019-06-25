@@ -95,25 +95,26 @@ EOF
 # Create policy for CloudWatch Event - SNS
 # -----------------------------------------------------------
 
-data "aws_iam_policy_document" "sns_topic_policy" {
+data "aws_iam_policy_document" "sns_publish" {
   statement {
     effect  = "Allow"
     actions = ["SNS:Publish"]
-    principals {
-      type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
-    }
     resources = ["${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"]
   }
 }
 
+resource "aws_iam_policy" "sns" {
+  policy = "${data.aws_iam_policy_document.sns_publish.json}"
+  name   = "publish-sns-access"
+}
+
 # -----------------------------------------------------------
-# Attach Policy to SNS
+# Attach SNS Policy to Lambda role
 # -----------------------------------------------------------
 
-resource "aws_sns_topic_policy" "default" {
-  arn    = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
-  policy = "${data.aws_iam_policy_document.sns_topic_policy.json}"
+resource "aws_iam_role_policy_attachment" "lambda_sns" {
+  role = "${aws_iam_role.lambda_unused_credentials_role.name}"
+  policy_arn = "${aws_iam_policy.sns.arn}"
 }
 
 # -----------------------------------------------------------
