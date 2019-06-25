@@ -30,20 +30,20 @@ def lambda_handler(event, _):
     for user in users:
         list_user_keys = list_keys(client, user)
         if user_excluded_pw_check(client, now, user) is not None:
-            excluded_users.append(user)
+            excluded_users.append(user_excluded_pw_check(client, now, user))
         for access_key in list_user_keys:
-            if not user_excluded_key_check(access_key, now) is not None:
-                excluded_users.append(user)
-        if user not in excluded_users:
-            if password_last_used_present(user) is not None:
-                password_never_used.append(user)
+            if user_excluded_key_check(access_key, now) is not None:
+                excluded_users.append(user_excluded_key_check(access_key, now))
+        if not user['UserName'] in excluded_users:
+            if password_last_used_present(user) is None:
+                password_never_used.append(user['UserName'])
             if password_last_used_exceed(now, user) is not None:
-                password_exceed.append(user)
+                password_exceed.append(password_last_used_exceed(now, user))
             for access_key in list_user_keys:
                 if access_key_active(access_key):
                     key_last_date = key_last_used(client, access_key)
                     if last_used_date_absent(key_last_date) is not None:
-                        key_never_used.append(key_last_date)
+                        key_never_used.append(last_used_date_absent(key_last_date))
                     if last_used_date_exceed(now, key_last_date) is not None:
                         key_exceed.append(last_used_date_exceed(now, key_last_date))
     sns_dict['excluded_users'] = excluded_users
@@ -51,6 +51,7 @@ def lambda_handler(event, _):
     sns_dict['key_exceed'] = key_exceed
     sns_dict['key_never_used'] = key_never_used
     sns_dict['password_never_used'] = password_never_used
+    LOGGER.info("Report send to sns: %s", sns_dict)
     sns_send_notifications(**sns_dict)
 
 def list_users(client):
@@ -66,7 +67,7 @@ def user_excluded_pw_check(client, now, user):
     user_create_date = extract_date(user_date_created(client, user))
     user_age = credentials_age(now, user_create_date)
     if new_user(user_age) or admin_user(client, user):
-        return user
+        return user['UserName']
     return None
 
 def user_date_created(client, user):
@@ -85,16 +86,9 @@ def admin_user(client, user):
     """
     Check if this user contains AdministratorAccess
     """
-    for group in list_groups(client, user):
-        if check_admin_user_policy(client, user) or check_admin_group_policy(client, group):
-            return True
+    if check_admin_user_policy(client, user) or check_admin_group_policy(client, user):
+        return True
     return False
-
-def list_user_policies(client, user):
-    """
-    Return the names of the inline policies embedded in the specified IAM user
-    """
-    return client.list_user_policies(UserName=user['UserName'])['PolicyNames']
 
 def list_groups(client, user):
     """
@@ -102,13 +96,14 @@ def list_groups(client, user):
     """
     return client.list_groups_for_user(UserName=user['UserName'])['Groups']
 
-def check_admin_group_policy(client, group):
+def check_admin_group_policy(client, user):
     """
     Return True if user group contains AdministratorAccess
     """
-    for group_policy in attached_group_policy(client, group):
-        if group_policy['PolicyName'] == "AdministratorAccess":
-            return True
+    for group in list_groups(client, user):
+        for group_policy in attached_group_policy(client, group):
+            if group_policy['PolicyName'] == "AdministratorAccess":
+                return True
     return False
 
 def attached_group_policy(client, group):
@@ -161,7 +156,7 @@ def password_last_used_present(user):
     Return User if user has used his/her password
     """
     if 'PasswordLastUsed' in user:
-        return user
+        return user['UserName']
     return None
 
 def password_last_used_exceed(now, user):
@@ -172,7 +167,7 @@ def password_last_used_exceed(now, user):
         password_last_used = extract_date(user['PasswordLastUsed'])
         age = credentials_age(now, password_last_used)
         if age_exceed_threshold(age):
-            return user
+            return user['UserName']
     return None
 
 def access_key_active(access_key):
@@ -187,7 +182,7 @@ def last_used_date_absent(key_last_date):
     """
     Return Username if last_used_date present
     """
-    if not 'LastUsedDate' in key_last_date:
+    if not 'AccessKeyLastUsed' in key_last_date:
         return key_last_date['UserName']
     return None
 
@@ -215,6 +210,7 @@ def user_excluded_key_check(access_key, now):
     access_key_create_date = extract_date(access_key['CreateDate'])
     access_key_age = credentials_age(now, access_key_create_date)
     if new_user(access_key_age):
+        LOGGER.info("Excluded access_key from checks: %s", access_key['UserName'])
         return access_key['UserName']
     return None
 
@@ -227,19 +223,24 @@ def sns_send_notifications(**kwargs):
     len_pw_exceed = len(kwargs['password_exceed'])
     len_key_never_used = len(kwargs['key_never_used'])
     len_key_exceed = len(kwargs['key_exceed'])
-    message_body = '{} user(s) password exceed {} days:'.format(
+    message_body = '\n {} user(s) password exceed {} days:'.format(
         len_pw_exceed,
         DEFAULT_AGE_THRESHOLD_IN_DAYS
     )
+    message_body += '\n List of UserNames:'
     for user in kwargs['password_exceed']:
         message_body += '\n user: {}'.format(user)
-    message_body = '{} access_key(s) have never been used:'.format(len_key_never_used)
+    message_body += '\n {} access_key(s) have never been used:'.format(len_key_never_used)
+    message_body += '\n List of UserNames:'
     for username in kwargs['key_never_used']:
         message_body += '\n Username: {}'.format(username)
-    message_body = '{} access_key(s) exceed {} days:'.format(
+    message_body += '\n {} access_key(s) exceed {} days:'.format(
         len_key_exceed,
         DEFAULT_AGE_THRESHOLD_IN_DAYS
     )
+    message_body += '\n List of UserNames:'
     for username in kwargs['key_exceed']:
         message_body += '\n Username: {}'.format(username)
+    LOGGER.info("Subject line: %s", subject)
+    LOGGER.info("Message body: %s", message_body)
     sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)

@@ -106,7 +106,7 @@ def test_last_used_date_absent():
     list_keys = sns_unused_credentials.list_keys(iam, users[0])
     key_last_date = sns_unused_credentials.key_last_used(iam, list_keys[0])
     resp = sns_unused_credentials.last_used_date_absent(key_last_date)
-    assert resp == ('test-user')
+    assert resp == None
 
 @mock_iam()
 def test_attached_user_policy():
@@ -177,8 +177,7 @@ def test_check_admin_group_policy():
     iam.add_user_to_group(GroupName=group,UserName=username)
     iam.attach_group_policy(GroupName=group, PolicyArn=policy['Policy']['Arn'])
     users = sns_unused_credentials.list_users(iam)
-    groups = sns_unused_credentials.list_groups(iam, users[0])
-    resp = sns_unused_credentials.check_admin_group_policy(iam, groups[0])
+    resp = sns_unused_credentials.check_admin_group_policy(iam, users[0])
     assert resp is True
 
 @mock_iam()
