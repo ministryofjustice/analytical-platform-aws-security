@@ -4,7 +4,7 @@
 
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "event-invoke-lambda"
-  schedule_expression = "cron(0 9 ? * MON-FRI *)"
+  schedule_expression = "cron(0 9 ? * MON *)"
 }
 
 # -----------------------------------------------------------
@@ -61,7 +61,15 @@ resource "aws_cloudwatch_log_group" "lambda_unused_credentials_log" {
 }
 
 # -----------------------------------------------------------
-# Collect Email SSM Parameters
+# Collect Source Email SSM Parameters
+# -----------------------------------------------------------
+
+data "aws_ssm_parameter" "display_name" {
+  name = "${var.display_name}"
+}
+
+# -----------------------------------------------------------
+# Collect destination emails SSM Parameters
 # -----------------------------------------------------------
 
 data "aws_ssm_parameter" "unused_credentials_emails" {
@@ -184,7 +192,7 @@ resource "aws_cloudformation_stack" "sns_topic" {
 data "template_file" "cloudformation_sns_stack" {
   template = "${file("${path.module}/email-sns-stack.json.tpl")}"
   vars {
-    display_name  = "${var.display_name}"
+    display_name  = "${data.aws_ssm_parameter.display_name.value}"
     subscriptions = "${join("," , formatlist("{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" }", split(",", data.aws_ssm_parameter.unused_credentials_emails.value), var.protocol))}"
   }
 }

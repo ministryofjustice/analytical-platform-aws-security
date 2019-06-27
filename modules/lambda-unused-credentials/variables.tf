@@ -49,9 +49,9 @@ variable "stack_name" {
 }
 
 variable "ssm_unused_credentials_emails" {
-  default = "unused_credentials_emails_list"
+  default = "destination-emails-list-ap-aws-security"
 }
 
 variable "display_name" {
-  default = "noreply@example.com"
+  default = "source-email-ap-aws-security"
 }
