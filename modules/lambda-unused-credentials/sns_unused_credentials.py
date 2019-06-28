@@ -183,7 +183,7 @@ def last_used_date_absent(key_last_date):
     """
     Return Username if last_used_date present
     """
-    if not 'AccessKeyLastUsed' in key_last_date:
+    if not 'LastUsedDate' in key_last_date['AccessKeyLastUsed']:
         return key_last_date['UserName']
     return None
 
@@ -192,10 +192,11 @@ def last_used_date_exceed(now, key_last_date):
     """
     Return Username if access_key exceed threshold
     """
-    access_key_last_used_date = extract_date(key_last_date['AccessKeyLastUsed']['LastUsedDate'])
-    age = credentials_age(now, access_key_last_used_date)
-    if age_exceed_threshold(age):
-        return key_last_date['UserName']
+    if 'LastUsedDate' in key_last_date['AccessKeyLastUsed']:
+        access_key_last_used_date = extract_date(key_last_date['AccessKeyLastUsed']['LastUsedDate'])
+        age = credentials_age(now, access_key_last_used_date)
+        if age_exceed_threshold(age):
+            return key_last_date['UserName']
     return None
 
 def extract_date(date_info):
@@ -224,22 +225,24 @@ def sns_send_notifications(**kwargs):
     len_pw_exceed = len(kwargs['password_exceed'])
     len_key_never_used = len(kwargs['key_never_used'])
     len_key_exceed = len(kwargs['key_exceed'])
-    message_body = '\n {} user(s) password exceed {} days:'.format(
+    message_body = '\n {} user(s) did not have any activities for the more than {} days:'.format(
         len_pw_exceed,
         DEFAULT_AGE_THRESHOLD_IN_DAYS
     )
-    message_body += '\n List of UserNames:'
+    message_body += '\n List of UserNames exceeding {} days:'.format(DEFAULT_AGE_THRESHOLD_IN_DAYS)
     for user in kwargs['password_exceed']:
         message_body += '\n user: {}'.format(user)
-    message_body += '\n {} access_key(s) have never been used:'.format(len_key_never_used)
-    message_body += '\n List of UserNames:'
+    message_body += '\n {} active access_key(s) but have never been in used:'.format(
+        len_key_never_used
+    )
+    message_body += '\n List of UserNames containing unused access_keys:'
     for username in kwargs['key_never_used']:
         message_body += '\n Username: {}'.format(username)
-    message_body += '\n {} access_key(s) exceed {} days:'.format(
+    message_body += '\n {} active access_key(s) but not in use for the last {} days:'.format(
         len_key_exceed,
         DEFAULT_AGE_THRESHOLD_IN_DAYS
     )
-    message_body += '\n List of UserNames:'
+    message_body += '\n List of UserNames containing idle access_keys:'
     for username in kwargs['key_exceed']:
         message_body += '\n Username: {}'.format(username)
     LOGGER.info("Subject line: %s", subject)
