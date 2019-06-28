@@ -232,7 +232,7 @@ def sns_send_notifications(**kwargs):
     message_body += '\n List of UserNames exceeding {} days:'.format(DEFAULT_AGE_THRESHOLD_IN_DAYS)
     for user in kwargs['password_exceed']:
         message_body += '\n user: {}'.format(user)
-    message_body += '\n {} active access_key(s) but have never been in used:'.format(
+    message_body += '\n {} active access_key(s) but have never been in use:'.format(
         len_key_never_used
     )
     message_body += '\n List of UserNames containing unused access_keys:'
