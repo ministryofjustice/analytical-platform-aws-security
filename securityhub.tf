@@ -10,6 +10,7 @@ module "security-hub-landing" {
   assume_role_in_account_id  = "${var.ap_accounts["landing"]}"
 }
 
+
 # Activate Security Hub in dev account
 module "security-hub-dev" {
   source                     = "modules/securityhub"
