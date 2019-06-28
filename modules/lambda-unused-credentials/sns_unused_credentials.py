@@ -225,14 +225,14 @@ def sns_send_notifications(**kwargs):
     len_pw_exceed = len(kwargs['password_exceed'])
     len_key_never_used = len(kwargs['key_never_used'])
     len_key_exceed = len(kwargs['key_exceed'])
-    message_body = '\n {} user(s) did not have any activities for the more than {} days:'.format(
+    message_body = '\n {} user(s) did not have any activities for more than {} days:'.format(
         len_pw_exceed,
         DEFAULT_AGE_THRESHOLD_IN_DAYS
     )
     message_body += '\n List of UserNames exceeding {} days:'.format(DEFAULT_AGE_THRESHOLD_IN_DAYS)
     for user in kwargs['password_exceed']:
         message_body += '\n user: {}'.format(user)
-    message_body += '\n {} active access_key(s) but have never been in use:'.format(
+    message_body += '\n {} active access_key(s) that have never been in use'.format(
         len_key_never_used
     )
     message_body += '\n List of UserNames containing unused access_keys:'
