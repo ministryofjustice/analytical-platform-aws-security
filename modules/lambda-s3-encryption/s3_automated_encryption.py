@@ -13,7 +13,6 @@ def lambda_handler(event, context):
     buckets = {}
     buckets['Encryption_Applied'] = []
     #buckets['Already_Encrypted'] = []
-
     date_fmt = strftime("%d_%m_%Y_%H:%M:%S", gmtime())              #get to the current date
     account_id = context.invoked_function_arn.split(":")[4]
     sns_topic_arn = os.environ['TOPIC_ARN']
@@ -27,6 +26,7 @@ def list_buckets(client):
     return client.list_buckets()
 
 def bucket_encrypted():
+    return client.get_bucket_encryption(Bucket=bucket_dictionary['Name'])
 
     try:
         # describe buckets
