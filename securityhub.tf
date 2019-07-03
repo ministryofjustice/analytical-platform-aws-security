@@ -15,3 +15,9 @@ module "security-hub-prod" {
   source                     = "modules/securityhub"
   assume_role_in_account_id  = "${var.ap_accounts["prod"]}"
 }
+
+# Activate Security Hub in data account
+module "security-hub-data" {
+  source                     = "modules/securityhub"
+  assume_role_in_account_id  = "${var.ap_accounts["data"]}"
+}
