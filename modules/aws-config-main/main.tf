@@ -124,6 +124,14 @@ resource "aws_config_configuration_aggregator" "prod_account" {
   }
 }
 
+resource "aws_config_configuration_aggregator" "data_account" {
+  name = "data-aws-config"
+  account_aggregation_source {
+    account_ids = ["${var.data_aws_config_account_id}"]
+    regions     = ["${var.region}"]
+  }
+}
+
 # -----------------------------------------------------------
 # AWS Config Rules
 # -----------------------------------------------------------

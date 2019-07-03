@@ -22,3 +22,5 @@ variable "environment" {}
 variable "dev_aws_config_account_id" {}
 
 variable "prod_aws_config_account_id" {}
+
+variable "data_aws_config_account_id" {}
