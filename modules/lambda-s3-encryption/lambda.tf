@@ -8,7 +8,7 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 }
 
 # -----------------------------------------------------------
-# Create IAM Role for unused credentials lambda
+# Create IAM Role for s3 encryption lambda
 # -----------------------------------------------------------
 
 resource "aws_iam_role" "lambda_s3_encryption_role" {
