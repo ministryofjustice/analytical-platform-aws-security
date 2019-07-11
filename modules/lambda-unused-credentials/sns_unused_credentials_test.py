@@ -7,6 +7,18 @@ from freezegun import freeze_time
 from dateutil.tz import tzutc
 import boto3
 
+MOCK_POLICY = """
+{
+  "Version": "2012-10-17",
+  "Statement":
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::example_bucket"
+    }
+}
+"""
+
 def test_age_exceed_threshold():
     assert sns_unused_credentials.age_exceed_threshold(121) == True
     assert sns_unused_credentials.age_exceed_threshold(119) == False
@@ -111,13 +123,12 @@ def test_last_used_date_absent():
 @mock_iam()
 def test_attached_user_policy():
     policy_name = 'AdministratorAccess'
-    policy_document = "{'mypolicy': 'test'}"
     username = 'test-user'
     iam = boto3.client('iam')
     iam.create_user(UserName=username)
     policy = iam.create_policy(
         PolicyName=policy_name,
-        PolicyDocument=policy_document
+        PolicyDocument=MOCK_POLICY
     )
     iam.attach_user_policy(UserName=username, PolicyArn=policy['Policy']['Arn'])
     users = sns_unused_credentials.list_users(iam)
@@ -127,7 +138,6 @@ def test_attached_user_policy():
 @mock_iam()
 def test_attached_user_policy():
     policy_name = 'AdministratorAccess'
-    policy_document = "{'mypolicy': 'test'}"
     username = 'test-user'
     group = 'test-group'
     iam = boto3.client('iam')
@@ -135,7 +145,7 @@ def test_attached_user_policy():
     iam.create_group(GroupName=group)
     policy = iam.create_policy(
         PolicyName=policy_name,
-        PolicyDocument=policy_document
+        PolicyDocument=MOCK_POLICY
     )
     iam.add_user_to_group(GroupName=group,UserName=username)
     iam.attach_group_policy(GroupName=group, PolicyArn=policy['Policy']['Arn'])
@@ -148,13 +158,12 @@ def test_attached_user_policy():
 @mock_iam()
 def test_check_admin_user_policy():
     policy_name = 'AdministratorAccess'
-    policy_document = "{'mypolicy': 'test'}"
     username = 'test-user'
     iam = boto3.client('iam')
     iam.create_user(UserName=username)
     policy = iam.create_policy(
         PolicyName=policy_name,
-        PolicyDocument=policy_document
+        PolicyDocument=MOCK_POLICY
     )
     iam.attach_user_policy(UserName=username, PolicyArn=policy['Policy']['Arn'])
     users = sns_unused_credentials.list_users(iam)
@@ -164,7 +173,6 @@ def test_check_admin_user_policy():
 @mock_iam()
 def test_check_admin_group_policy():
     policy_name = 'AdministratorAccess'
-    policy_document = "{'mypolicy': 'test'}"
     username = 'test-user'
     group = 'test-group'
     iam = boto3.client('iam')
@@ -172,7 +180,7 @@ def test_check_admin_group_policy():
     iam.create_group(GroupName=group)
     policy = iam.create_policy(
         PolicyName=policy_name,
-        PolicyDocument=policy_document
+        PolicyDocument=MOCK_POLICY
     )
     iam.add_user_to_group(GroupName=group,UserName=username)
     iam.attach_group_policy(GroupName=group, PolicyArn=policy['Policy']['Arn'])
@@ -183,13 +191,12 @@ def test_check_admin_group_policy():
 @mock_iam()
 def test_check_admin_user_policy():
     policy_name = 'mytest'
-    policy_document = "{'mypolicy': 'test'}"
     username = 'test-user'
     iam = boto3.client('iam')
     iam.create_user(UserName=username)
     policy = iam.create_policy(
         PolicyName=policy_name,
-        PolicyDocument=policy_document
+        PolicyDocument=MOCK_POLICY
     )
     iam.attach_user_policy(UserName=username, PolicyArn=policy['Policy']['Arn'])
     users = sns_unused_credentials.list_users(iam)
