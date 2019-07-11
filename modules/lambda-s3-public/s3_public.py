@@ -55,7 +55,7 @@ def bucket_acl(client, bucket_name):
     try:
         return client.get_bucket_acl(Bucket=bucket_name)['Grants']
     except ClientError as client_error:
-        LOGGER.error('Exception: %s', client_error)
+        LOGGER.error('Get Acls Exception: %s', client_error)
         return None
 
 def bucket_permissions(acls):
@@ -77,7 +77,7 @@ def retrieve_block_access(client, bucket_name):
     try:
         return client.get_public_access_block(Bucket=bucket_name)
     except ClientError as client_error:
-        LOGGER.error('Exception: %s', client_error)
+        LOGGER.error('Get Access Block Exception: %s', client_error)
         return None
 
 def block_configuration(client, bucket_name, response):
@@ -94,14 +94,18 @@ def apply_block_access(client, bucket_name):
     """
     Apply public access block
     """
-    return client.put_public_access_block(
-        Bucket=bucket_name,
-        PublicAccessBlockConfiguration={
-            'BlockPublicAcls': True,
-            'IgnorePublicAcls': True,
-            'BlockPublicPolicy': True,
-            'RestrictPublicBuckets': True
-            })
+    try:
+        return client.put_public_access_block(
+            Bucket=bucket_name,
+            PublicAccessBlockConfiguration={
+                'BlockPublicAcls': True,
+                'IgnorePublicAcls': True,
+                'BlockPublicPolicy': True,
+                'RestrictPublicBuckets': True
+                })
+    except ClientError as client_error:
+        LOGGER.error('Put Access Block Exception: %s', client_error)
+        return None
 
 def sns_notify_public_bucket(private_buckets, public_buckets):
     """
