@@ -13,10 +13,21 @@ set -o pipefail
 set -o nounset
 
 function install_packages() {
+  pushd lambda-s3-public/
+  pip install -r requirements.txt -t lib
+  popd
   pip install -r requirements_test.txt
 }
 
 function zip_python() {
+  pushd lambda-s3-encryption/
+  zip -r ../lambda-s3-encryption.zip s3_automated_encryption.py
+  popd
+  mv lambda-s3-encryption.zip ../
+  pushd lambda-s3-public/
+  zip -r ../lambda-s3-public.zip *
+  popd
+  mv lambda-s3-public.zip ../
   pushd lambda-unused-credentials/
   zip -r ../lambda-unused-credentials.zip sns_unused_credentials.py
   popd
@@ -28,6 +39,14 @@ function zip_python() {
 }
 
 function test_python() {
+  pushd lambda-s3-encryption/
+  pylint s3_automated_encryption.py
+  pytest .
+  popd
+  pushd lambda-s3-public/
+  pylint s3_public.py
+  pytest .
+  popd
   pushd lambda-unused-credentials/
   pylint sns_unused_credentials.py
   pytest .

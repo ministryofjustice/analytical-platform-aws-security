@@ -8,11 +8,11 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 }
 
 # -----------------------------------------------------------
-# Create IAM Role for s3 encryption lambda
+# Create IAM Role for s3 public lambda
 # -----------------------------------------------------------
 
-resource "aws_iam_role" "lambda_s3_encryption_role" {
-  name = "${var.lambda_s3_encryption_role}"
+resource "aws_iam_role" "lambda_s3_public_role" {
+  name = "${var.lambda_s3_public_role}"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -36,14 +36,14 @@ EOF
 
 resource "aws_cloudwatch_event_target" "main" {
   rule      = "${aws_cloudwatch_event_rule.schedule.name}"
-  arn       = "${aws_lambda_function.lambda_s3_encryption.arn}"
+  arn       = "${aws_lambda_function.lambda_s3_public.arn}"
 }
 
-resource "aws_lambda_function" "lambda_s3_encryption" {
+resource "aws_lambda_function" "lambda_s3_public" {
   filename         = "${var.filename}"
   function_name    = "${var.lambda_function_name}"
-  role             = "${aws_iam_role.lambda_s3_encryption_role.arn}"
-  handler          = "sns_s3_encryption.lambda_handler"
+  role             = "${aws_iam_role.lambda_s3_public_role.arn}"
+  handler          = "sns_s3_public.lambda_handler"
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
@@ -55,7 +55,7 @@ resource "aws_lambda_function" "lambda_s3_encryption" {
   }
 }
 
-resource "aws_cloudwatch_log_group" "lambda_s3_encryption_log" {
+resource "aws_cloudwatch_log_group" "lambda_s3_public_log" {
   name              = "/aws/lambda/${var.lambda_function_name}"
   retention_in_days = 14
 }
@@ -72,16 +72,16 @@ data "aws_ssm_parameter" "display_name" {
 # Collect destination emails SSM Parameters
 # -----------------------------------------------------------
 
-data "aws_ssm_parameter" "s3_encryption_emails" {
-  name = "${var.ssm_s3_encryption_emails}"
+data "aws_ssm_parameter" "s3_public_emails" {
+  name = "${var.ssm_s3_public_emails}"
 }
 
 # -----------------------------------------------------------
 # Create policy for logging
 # -----------------------------------------------------------
 
-resource "aws_iam_policy" "s3_encryption_log_policy" {
-  name = "${var.s3_encryption_log_policy}"
+resource "aws_iam_policy" "s3_public_log_policy" {
+  name = "${var.s3_public_log_policy}"
   description = "IAM policy for logging from lambda"
   policy = <<EOF
 {
@@ -122,7 +122,7 @@ resource "aws_iam_policy" "sns" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_sns" {
-  role = "${aws_iam_role.lambda_s3_encryption_role.name}"
+  role = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.sns.arn}"
 }
 
@@ -132,16 +132,17 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 
 resource "aws_iam_policy" "access_s3_policy" {
   name = "${var.access_s3_policy}"
-  description = "S3 policy for logging from lambda"
+  description = "IAM policy for logging from lambda"
   policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
       "Action": [
-        "s3:GetEncryptionConfiguration",
+        "s3:GetAccountPublicAccessBlock",
+        "s3:GetBucketAcl",
         "s3:List*",
-        "s3:PutEncryptionConfiguration"
+        "s3:PutBucketPublicAccessBlock"
       ],
       "Resource": "*",
       "Effect": "Allow"
@@ -156,8 +157,8 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role = "${aws_iam_role.lambda_s3_encryption_role.name}"
-  policy_arn = "${aws_iam_policy.s3_encryption_log_policy.arn}"
+  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  policy_arn = "${aws_iam_policy.s3_public_log_policy.arn}"
 }
 
 # -----------------------------------------------------------
@@ -165,14 +166,14 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_s3" {
-  role = "${aws_iam_role.lambda_s3_encryption_role.name}"
+  role = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.access_s3_policy.arn}"
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
     statement_id = "AllowExecutionFromCloudWatch"
     action = "lambda:InvokeFunction"
-    function_name = "${aws_lambda_function.lambda_s3_encryption.function_name}"
+    function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
     principal = "events.amazonaws.com"
     source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
 }
@@ -194,6 +195,6 @@ data "template_file" "cloudformation_sns_stack" {
   template = "${file("${path.module}/email-sns-stack.json.tpl")}"
   vars {
     display_name  = "${data.aws_ssm_parameter.display_name.value}"
-    subscriptions = "${join("," , formatlist("{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" }", split(",", data.aws_ssm_parameter.s3_encryption_emails.value), var.protocol))}"
+    subscriptions = "${join("," , formatlist("{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" }", split(",", data.aws_ssm_parameter.s3_public_emails.value), var.protocol))}"
   }
 }
