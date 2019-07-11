@@ -5,6 +5,7 @@
 """
 import os
 import logging
+from botocore.exceptions import ClientError
 import boto3
 
 AWS_ACCOUNT = os.getenv('AWS_ACCOUNT')
@@ -14,7 +15,7 @@ S3_EXCEPTION = os.getenv('S3_EXCEPTION')
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
-def lambda_handler(event):
+def lambda_handler(event, _):
     """
     Lambda handler function
     """
@@ -22,15 +23,17 @@ def lambda_handler(event):
     encrypted_bucket = []
     client = boto3.client('s3')
     for bucket_infos in list_buckets(client):
+        LOGGER.info('Bucket: %s', bucket_infos['Name'])
         if bucket_infos['Name'] not in S3_EXCEPTION:
-            if bucket_encrypted(client, bucket_infos['Name']) is not None:
-                check_bucket_encryption(
-                    bucket_encrypted(client, bucket_infos['Name']),
-                    bucket_infos['Name']
-                )
+            encrypt_infos = bucket_encrypted(client, bucket_infos['Name'])
+            LOGGER.info('encrypt_infos: %s', encrypt_infos)
+            if encrypt_infos is not None:
+                LOGGER.info('Bucket: %s', bucket_infos['Name'])
+                check_bucket_encryption(encrypt_infos, bucket_infos['Name'])
             else:
                 apply_bucket_encryption(client, bucket_infos['Name'])
                 encrypted_bucket.append(bucket_infos['Name'])
+    LOGGER.info('List of encrypted buckets: %s', encrypted_bucket)
     if encrypted_bucket:
         sns_notify_encrypted_bucket(encrypted_bucket)
 
@@ -42,30 +45,40 @@ def list_buckets(client):
 
 def bucket_encrypted(client, bucket_name):
     """
-    Return encryption information on bucket
+    Return server side encryption if exist
     """
-    return client.get_bucket_encryption(Bucket=bucket_name)
+    try:
+        return client.get_bucket_encryption(Bucket=bucket_name)
+    except ClientError as client_error:
+        LOGGER.info("No Server side encryption %s", client_error)
+        return None
+
 
 def check_bucket_encryption(response, bucket_name):
     """
     Log information about bucket encryption
     """
+    LOGGER.info('Checking Server side encryption on Bucket: %s', bucket_name)
     for rules in response['ServerSideEncryptionConfiguration']['Rules']:
         for _, value in rules['ApplyServerSideEncryptionByDefault'].items():
             if str(value) in ('AES256', 'aws:kms'):
-                LOGGER.info("% is already encrypted", bucket_name)
+                LOGGER.info("%s is already encrypted", bucket_name)
 
 def apply_bucket_encryption(client, bucket_name):
     """
     Return aws response setting encryption ON on bucket name
     """
-    return client.put_bucket_encryption(
-        Bucket=bucket_name,
-        ServerSideEncryptionConfiguration={
-            'Rules': [{
-                'ApplyServerSideEncryptionByDefault': {'SSEAlgorithm': 'AES256'}
-            },]
-        })
+    LOGGER.info("Encrypting following bucket: %s", bucket_name)
+    try:
+        return client.put_bucket_encryption(
+            Bucket=bucket_name,
+            ServerSideEncryptionConfiguration={
+                'Rules': [{
+                    'ApplyServerSideEncryptionByDefault': {'SSEAlgorithm': 'AES256'}
+                },]
+            })
+    except ClientError as client_error:
+        LOGGER.error("Failed encrypting bucket: %s", client_error)
 
 def sns_notify_encrypted_bucket(encrypted_bucket):
     """

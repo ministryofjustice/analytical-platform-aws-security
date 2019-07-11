@@ -132,7 +132,7 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 
 resource "aws_iam_policy" "access_s3_policy" {
   name = "${var.access_s3_policy}"
-  description = "IAM policy for logging from lambda"
+  description = "S3 policy for logging from lambda"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -144,7 +144,8 @@ resource "aws_iam_policy" "access_s3_policy" {
         "s3:GetBucketLocation",
         "s3:GetBucketPolicyStatus",
         "s3:GetBucketPublicAccessBlock",
-        "s3:ListAllMyBuckets"
+        "s3:ListAllMyBuckets",
+        "s3:PutEncryptionConfiguration"
       ],
       "Resource": "*",
       "Effect": "Allow"
