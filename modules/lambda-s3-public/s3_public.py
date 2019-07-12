@@ -40,7 +40,9 @@ def lambda_handler(event, _):
                 else:
                     public_buckets.append(bucket_info['Name'])
     LOGGER.info('Private Buckets: %s', private_buckets)
-    sns_notify_public_bucket(private_buckets, public_buckets)
+    LOGGER.info('Public Buckets: %s', public_buckets)
+    if private_buckets or public_buckets:
+        sns_notify_public_bucket(private_buckets, public_buckets)
 
 def list_buckets(client):
     """
@@ -114,5 +116,5 @@ def sns_notify_public_bucket(private_buckets, public_buckets):
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account - {} S3 Bucket Public Status'.format(AWS_ACCOUNT)
     message_body = '\n Public Access Block configuration applied to: {}'.format(private_buckets)
-    message_body += '\n !!!PUBLIC BUCKET NOT IN EXCEPTION LIST!!!: {}'.format(public_buckets)
+    message_body += '\n !!!POTENTIAL PUBLIC BUCKETS, please review!!!: {}'.format(public_buckets)
     sns_client.publish(TopicArn=TOPIC_ARN, Message=message_body, Subject=subject)

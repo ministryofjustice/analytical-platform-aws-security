@@ -4,7 +4,7 @@
 
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "event-invoke-lambda"
-  schedule_expression = "cron(0 9 ? * MON *)"
+  schedule_expression = "cron(0 9 ? * MON-FRI *)"
 }
 
 # -----------------------------------------------------------
@@ -51,6 +51,7 @@ resource "aws_lambda_function" "lambda_s3_encryption" {
     variables = {
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
+      S3_EXCEPTION  = "${var.list_s3_exception}"
     }
   }
 }

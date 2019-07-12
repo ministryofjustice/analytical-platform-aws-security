@@ -40,3 +40,18 @@ variable "ssm_slack_incoming_webhook" {
 variable "ssm_slack_channel" {
   default = "landing-guardduty-slack-channel"
 }
+
+variable "landing_list_s3_public_exception" {
+  type = "list"
+  default = [""]
+}
+
+variable "dev_list_s3_public_exception" {
+  type = "list"
+  default = [""]
+}
+
+variable "prod_list_s3_public_exception" {
+  type = "list"
+  default = [""]
+}
