@@ -56,4 +56,6 @@ variable "display_name" {
   default = "source-email-ap-aws-security"
 }
 
-variable "list_s3_exception" {}
+variable "list_s3_exception" {
+  type = "list"
+}
