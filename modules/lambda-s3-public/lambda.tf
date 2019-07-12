@@ -4,7 +4,7 @@
 
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "event-invoke-lambda"
-  schedule_expression = "cron(0 9 ? * MON *)"
+  schedule_expression = "cron(0 9 ? * MON-FRI *)"
 }
 
 # -----------------------------------------------------------
@@ -43,14 +43,15 @@ resource "aws_lambda_function" "lambda_s3_public" {
   filename         = "${var.filename}"
   function_name    = "${var.lambda_function_name}"
   role             = "${aws_iam_role.lambda_s3_public_role.arn}"
-  handler          = "sns_s3_public.lambda_handler"
+  handler          = "s3_public.lambda_handler"
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
   environment {
     variables = {
-      SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
+      SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
+      S3_EXCEPTION  = "${var.list_s3_exception}"
     }
   }
 }

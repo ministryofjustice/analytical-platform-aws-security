@@ -55,3 +55,5 @@ variable "s3_encryption_emails" {
 variable "display_name" {
   default = "source-email-ap-aws-security"
 }
+
+variable "list_s3_exception" {}
