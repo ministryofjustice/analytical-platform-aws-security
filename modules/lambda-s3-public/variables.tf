@@ -33,8 +33,8 @@ variable "s3_public_log_policy" {
   default = "s3-public-log-policy"
 }
 
-variable "readonly_iam_policy" {
-  default = "s3-public-iam-policy"
+variable "access_s3_policy" {
+  default = "s3-public-s3-policy"
 }
 
 variable "protocol" {
@@ -48,7 +48,7 @@ variable "stack_name" {
   type        = "string"
 }
 
-variable "s3_public_emails" {
+variable "ssm_s3_public_emails" {
   default = "destination-emails-list-ap-aws-security"
 }
 
