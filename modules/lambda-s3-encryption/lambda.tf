@@ -35,8 +35,9 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_target" "main" {
-  rule      = "${aws_cloudwatch_event_rule.schedule.name}"
-  arn       = "${aws_lambda_function.lambda_s3_encryption.arn}"
+  rule       = "${aws_cloudwatch_event_rule.schedule.name}"
+  arn        = "${aws_lambda_function.lambda_s3_encryption.arn}"
+  depends_on = ["aws_lambda_function.lambda_s3_encryption"]
 }
 
 resource "aws_lambda_function" "lambda_s3_encryption" {
