@@ -172,14 +172,13 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = "${aws_iam_policy.access_s3_policy.arn}"
 }
 
-resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
-    statement_id = "AllowExecutionFromCloudWatch"
-    action = "lambda:InvokeFunction"
-    function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
-    principal = "events.amazonaws.com"
-    source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
-    depends_on = ["aws_lambda_function.lambda_s3_public"]
-}
+# resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
+#     statement_id = "AllowExecutionFromCloudWatch"
+#     action = "lambda:InvokeFunction"
+#     function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
+#     principal = "events.amazonaws.com"
+#     source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
+# }
 
 # -----------------------------------------------------------
 # AWS SNS topic (https://www.terraform.io/docs/providers/aws/r/sns_topic_subscription.html#email)
