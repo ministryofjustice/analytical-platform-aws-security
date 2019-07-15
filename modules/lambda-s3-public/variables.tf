@@ -57,7 +57,7 @@ variable "display_name" {
 }
 
 variable "list_s3_exception" {
-  type = "list"
+  type = list(string)
   default = [""]
 }
 
