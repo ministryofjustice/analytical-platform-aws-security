@@ -115,7 +115,7 @@ data "aws_iam_policy_document" "sns_publish" {
 
 resource "aws_iam_policy" "sns" {
   policy = "${data.aws_iam_policy_document.sns_publish.json}"
-  name   = "publish-sns-access"
+  name   = "${var.sns_iam_access}"
 }
 
 # -----------------------------------------------------------
