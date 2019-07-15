@@ -60,3 +60,7 @@ variable "list_s3_exception" {
   type = "list"
   default = [""]
 }
+
+variable "sns_iam_access" {
+  default = "s3-public-sns-iam-access"
+}
