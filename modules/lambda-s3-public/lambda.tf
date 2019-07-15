@@ -34,11 +34,10 @@ EOF
 # set up AWS Cloudwatch Event to target a lambda function
 # -----------------------------------------------------------
 
-resource "aws_cloudwatch_event_target" "main" {
-  rule       = "${aws_cloudwatch_event_rule.schedule.name}"
-  arn        = "${aws_lambda_function.lambda_s3_public.arn}"
-  depends_on = ["aws_lambda_function.lambda_s3_public"]
-}
+# resource "aws_cloudwatch_event_target" "main" {
+#   rule       = "${aws_cloudwatch_event_rule.schedule.name}"
+#   arn        = "${aws_lambda_function.lambda_s3_public.arn}"
+# }
 
 resource "aws_lambda_function" "lambda_s3_public" {
   filename         = "${var.filename}"
