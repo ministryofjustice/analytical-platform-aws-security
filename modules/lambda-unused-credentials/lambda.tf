@@ -5,7 +5,6 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "event-invoke-lambda"
   schedule_expression = "cron(0 9 ? * MON *)"
-  count               = 0
 }
 
 # -----------------------------------------------------------
@@ -38,7 +37,6 @@ EOF
 resource "aws_cloudwatch_event_target" "main" {
   rule      = "${aws_cloudwatch_event_rule.schedule.name}"
   arn       = "${aws_lambda_function.lambda_unused_credentials.arn}"
-  count     = 0
 }
 
 resource "aws_lambda_function" "lambda_unused_credentials" {
@@ -176,7 +174,6 @@ resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
     function_name = "${aws_lambda_function.lambda_unused_credentials.function_name}"
     principal = "events.amazonaws.com"
     source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
-    count = 0
 }
 
 # -----------------------------------------------------------
