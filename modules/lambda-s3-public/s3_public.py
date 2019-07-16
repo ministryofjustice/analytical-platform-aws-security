@@ -50,6 +50,18 @@ def list_buckets(client):
     """
     return client.list_buckets()['Buckets']
 
+def ssm_s3_list(ssm_name):
+    """
+    Return list of buckets from SSM Parameters
+    """
+    ssmclient = boto3.client('ssm')
+    s3_exception_list = []
+    s3_exception_list = ssmclient.get_parameter(
+            Name=ssm_name
+        )['Parameter']['Value'].split(',')
+    return s3_exception_list
+
+
 def bucket_acl(client, bucket_name):
     """
     Return bucket acls

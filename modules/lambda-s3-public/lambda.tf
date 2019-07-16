@@ -47,10 +47,12 @@ resource "aws_lambda_function" "lambda_s3_public" {
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
+  count            = 0
   environment {
     variables = {
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
+      S3_EXCEPTION  = "${var.ssm_s3_list_parameter}"
     }
   }
 }
@@ -127,12 +129,35 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 }
 
 # -----------------------------------------------------------
+# READONLY SSM policy
+# -----------------------------------------------------------
+
+resource "aws_iam_policy" "access_ssm_policy" {
+  name = "${var.access_ssm_policy}"
+  description = "IAM policy for reading SSM parameter"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ssm:GetParameter*"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+# -----------------------------------------------------------
 # READONLY IAM policy
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "access_s3_policy" {
   name = "${var.access_s3_policy}"
-  description = "IAM policy for logging from lambda"
+  description = "IAM policy for read and write public access block"
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -159,6 +184,15 @@ EOF
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.s3_public_log_policy.arn}"
+}
+
+# -----------------------------------------------------------
+# Attach iam Policy to Lambda role
+# -----------------------------------------------------------
+
+resource "aws_iam_role_policy_attachment" "lambda_ssm" {
+  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  policy_arn = "${aws_iam_policy.access_ssm_policy.arn}"
 }
 
 # -----------------------------------------------------------
