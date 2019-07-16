@@ -52,7 +52,6 @@ resource "aws_lambda_function" "lambda_s3_encryption" {
     variables = {
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
-      S3_EXCEPTION  = "${var.list_s3_exception}"
     }
   }
 }
