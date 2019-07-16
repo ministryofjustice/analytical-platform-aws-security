@@ -56,8 +56,6 @@ variable "display_name" {
   default = "source-email-ap-aws-security"
 }
 
-variable "list_s3_exception" {}
-
 variable "sns_iam_access" {
   default = "s3-encryption-sns-iam-access"
 }

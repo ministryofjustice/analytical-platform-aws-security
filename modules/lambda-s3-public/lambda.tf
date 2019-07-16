@@ -51,7 +51,6 @@ resource "aws_lambda_function" "lambda_s3_public" {
     variables = {
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
-      S3_EXCEPTION  = "${var.list_s3_exception}"
     }
   }
 }
