@@ -5,6 +5,7 @@
 resource "aws_cloudwatch_event_rule" "schedule" {
   name                = "event-invoke-s3-public-lambda"
   schedule_expression = "cron(0 9 ? * MON-FRI *)"
+  count               = 0
 }
 
 # -----------------------------------------------------------
@@ -34,10 +35,11 @@ EOF
 # set up AWS Cloudwatch Event to target a lambda function
 # -----------------------------------------------------------
 
-# resource "aws_cloudwatch_event_target" "main" {
-#   rule       = "${aws_cloudwatch_event_rule.schedule.name}"
-#   arn        = "${aws_lambda_function.lambda_s3_public.arn}"
-# }
+resource "aws_cloudwatch_event_target" "main" {
+  rule       = "${aws_cloudwatch_event_rule.schedule.name}"
+  arn        = "${aws_lambda_function.lambda_s3_public.arn}"
+  count      = 0
+}
 
 resource "aws_lambda_function" "lambda_s3_public" {
   filename         = "${var.filename}"
@@ -170,13 +172,14 @@ resource "aws_iam_role_policy_attachment" "lambda_s3" {
   policy_arn = "${aws_iam_policy.access_s3_policy.arn}"
 }
 
-# resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
-#     statement_id = "AllowExecutionFromCloudWatch"
-#     action = "lambda:InvokeFunction"
-#     function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
-#     principal = "events.amazonaws.com"
-#     source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
-# }
+resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
+    statement_id = "AllowExecutionFromCloudWatch"
+    action = "lambda:InvokeFunction"
+    function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
+    principal = "events.amazonaws.com"
+    source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
+    count = 0
+}
 
 # -----------------------------------------------------------
 # AWS SNS topic (https://www.terraform.io/docs/providers/aws/r/sns_topic_subscription.html#email)
