@@ -57,7 +57,7 @@ def ssm_s3_list(ssm_name):
     ssmclient = boto3.client('ssm')
     s3_exception_list = []
     s3_exception_list = ssmclient.get_parameter(
-            Name=ssm_name
+        Name=ssm_name
         )['Parameter']['Value'].split(',')
     return s3_exception_list
 
