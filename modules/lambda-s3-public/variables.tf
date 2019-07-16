@@ -37,6 +37,10 @@ variable "access_s3_policy" {
   default = "s3-public-s3-policy"
 }
 
+variable "access_ssm_policy" {
+  default = "s3-public-ssm-policy"
+}
+
 variable "protocol" {
   default     = "email"
   description = "SNS Protocol to use. email or email-json"
@@ -58,4 +62,8 @@ variable "display_name" {
 
 variable "sns_iam_access" {
   default = "s3-public-sns-iam-access"
+}
+
+variable "ssm_s3_list_parameter" {
+  default = "s3-public-exception-list"
 }
