@@ -9,7 +9,7 @@ import logging
 from botocore.exceptions import ClientError
 import boto3
 
-TOPIC_ARN = os.getenv('TOPIC_ARN')
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 S3_EXCEPTION = os.getenv('S3_EXCEPTION')
 AWS_ACCOUNT = os.getenv('AWS_ACCOUNT')
 ACL_NOTIFICATORS = [
@@ -142,4 +142,4 @@ def sns_notify_public_bucket(private_buckets, public_buckets):
             public_buckets
         )
         message_body += '\n Number of public buckets: {}'.format(len(public_buckets))
-    sns_client.publish(TopicArn=TOPIC_ARN, Message=message_body, Subject=subject)
+    sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)

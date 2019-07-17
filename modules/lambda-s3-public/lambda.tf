@@ -163,8 +163,9 @@ resource "aws_iam_policy" "access_s3_policy" {
   "Statement": [
     {
       "Action": [
-        "s3:GetAccountPublicAccessBlock",
         "s3:GetBucketAcl",
+        "s3:GetAccountPublicAccessBlock",
+        "s3:GetBucketPublicAccessBlock",
         "s3:List*",
         "s3:PutBucketPublicAccessBlock"
       ],

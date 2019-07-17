@@ -9,7 +9,7 @@ from botocore.exceptions import ClientError
 import boto3
 
 AWS_ACCOUNT = os.getenv('AWS_ACCOUNT')
-TOPIC_ARN = os.getenv('TOPIC_ARN')
+SNS_TOPIC_ARN = os.getenv('SNS_TOPIC_ARN')
 S3_EXCEPTION = os.getenv('S3_EXCEPTION')
 
 LOGGER = logging.getLogger()
@@ -105,4 +105,4 @@ def sns_notify_encrypted_bucket(encrypted_bucket):
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account - {} S3 Bucket Encryption Status'.format(AWS_ACCOUNT)
     message_body = '\n Encryption applied to S3 buckets are {}'.format(encrypted_bucket)
-    sns_client.publish(TopicArn=TOPIC_ARN, Message=message_body, Subject=subject)
+    sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
