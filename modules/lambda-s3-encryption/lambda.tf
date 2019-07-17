@@ -37,7 +37,6 @@ EOF
 resource "aws_cloudwatch_event_target" "main" {
   rule       = "${aws_cloudwatch_event_rule.schedule.name}"
   arn        = "${aws_lambda_function.lambda_s3_encryption.arn}"
-  depends_on = ["aws_lambda_function.lambda_s3_encryption"]
 }
 
 resource "aws_lambda_function" "lambda_s3_encryption" {
@@ -52,6 +51,7 @@ resource "aws_lambda_function" "lambda_s3_encryption" {
     variables = {
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
+      S3_EXCEPTION  = "${var.ssm_s3_list_parameter}"
     }
   }
 }
@@ -128,7 +128,30 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 }
 
 # -----------------------------------------------------------
-# READONLY IAM policy
+# READONLY SSM policy
+# -----------------------------------------------------------
+
+resource "aws_iam_policy" "access_ssm_policy" {
+  name = "${var.access_ssm_policy}"
+  description = "IAM policy for reading SSM parameter"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ssm:GetParameter*"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+# -----------------------------------------------------------
+# READONLY S3 policy
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "access_s3_policy" {
@@ -159,6 +182,15 @@ EOF
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role = "${aws_iam_role.lambda_s3_encryption_role.name}"
   policy_arn = "${aws_iam_policy.s3_encryption_log_policy.arn}"
+}
+
+# -----------------------------------------------------------
+# Attach iam Policy to Lambda role
+# -----------------------------------------------------------
+
+resource "aws_iam_role_policy_attachment" "lambda_ssm" {
+  role = "${aws_iam_role.lambda_s3_encryption_role.name}"
+  policy_arn = "${aws_iam_policy.access_ssm_policy.arn}"
 }
 
 # -----------------------------------------------------------

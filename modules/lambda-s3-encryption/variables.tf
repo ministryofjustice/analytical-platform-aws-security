@@ -37,6 +37,10 @@ variable "readonly_iam_policy" {
   default = "s3-encryption-iam-policy"
 }
 
+variable "access_ssm_policy" {
+  default = "s3-encryption-ssm-policy"
+}
+
 variable "protocol" {
   default     = "email"
   description = "SNS Protocol to use. email or email-json"
@@ -58,4 +62,8 @@ variable "display_name" {
 
 variable "sns_iam_access" {
   default = "s3-encryption-sns-iam-access"
+}
+
+variable "ssm_s3_list_parameter" {
+  default = "s3-encryption-exception-list"
 }
