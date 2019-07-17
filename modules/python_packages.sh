@@ -14,7 +14,7 @@ set -o nounset
 
 function install_packages() {
   pushd lambda-s3-public/
-  pip install -r requirements.txt -t lib
+  pip install -r requirements.txt -t .
   popd
   pip install -r requirements_test.txt
 }

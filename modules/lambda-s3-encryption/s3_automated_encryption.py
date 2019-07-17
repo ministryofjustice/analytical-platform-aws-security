@@ -20,11 +20,14 @@ def lambda_handler(event, _):
     Lambda handler function
     """
     LOGGER.info('Event: %s', event)
-    encrypted_bucket = []
+    encrypted_buckets = []
+    exception_buckets = []
     client = boto3.client('s3')
+    if S3_EXCEPTION:
+        exception_buckets = ssm_s3_list(S3_EXCEPTION)
     for bucket_infos in list_buckets(client):
         LOGGER.info('Bucket: %s', bucket_infos['Name'])
-        if bucket_infos['Name'] not in S3_EXCEPTION:
+        if bucket_infos['Name'] not in exception_buckets:
             encrypt_infos = bucket_encrypted(client, bucket_infos['Name'])
             LOGGER.info('encrypt_infos: %s', encrypt_infos)
             if encrypt_infos is not None:
@@ -32,16 +35,31 @@ def lambda_handler(event, _):
                 check_bucket_encryption(encrypt_infos, bucket_infos['Name'])
             else:
                 apply_bucket_encryption(client, bucket_infos['Name'])
-                encrypted_bucket.append(bucket_infos['Name'])
-    LOGGER.info('List of encrypted buckets: %s', encrypted_bucket)
-    if encrypted_bucket:
-        sns_notify_encrypted_bucket(encrypted_bucket)
+                encrypted_buckets.append(bucket_infos['Name'])
+    LOGGER.info('List of encrypted buckets: %s', encrypted_buckets)
+    if encrypted_buckets:
+        sns_notify_encrypted_bucket(encrypted_buckets)
 
 def list_buckets(client):
     """
     Return list of buckets
     """
     return client.list_buckets()['Buckets']
+
+def ssm_s3_list(ssm_name):
+    """
+    Return list of buckets from SSM Parameters
+    """
+    ssmclient = boto3.client('ssm')
+    s3_exception_list = []
+    try:
+        s3_exception_list = ssmclient.get_parameter(
+            Name=ssm_name
+            )['Parameter']['Value'].split(',')
+        LOGGER.info('Buckets in list of exception: %s', s3_exception_list)
+    except ClientError as client_error:
+        LOGGER.error('No SSM parameter found: %s', client_error)
+    return s3_exception_list
 
 def bucket_encrypted(client, bucket_name):
     """

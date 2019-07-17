@@ -27,10 +27,13 @@ def lambda_handler(event, _):
     LOGGER.info('Event: %s', event)
     private_buckets = []
     public_buckets = []
+    exception_buckets = []
+    if S3_EXCEPTION:
+        exception_buckets = ssm_s3_list(S3_EXCEPTION)
     client = boto3.client('s3')
     list_bucket_response = list_buckets(client)
     for bucket_info in list_bucket_response:
-        if bucket_info['Name'] not in S3_EXCEPTION:
+        if bucket_info['Name'] not in exception_buckets:
             acls = bucket_acl(client, bucket_info['Name'])
             if not bucket_permissions(acls):
                 response = retrieve_block_access(client, bucket_info['Name'])
@@ -56,9 +59,13 @@ def ssm_s3_list(ssm_name):
     """
     ssmclient = boto3.client('ssm')
     s3_exception_list = []
-    s3_exception_list = ssmclient.get_parameter(
-        Name=ssm_name
-        )['Parameter']['Value'].split(',')
+    try:
+        s3_exception_list = ssmclient.get_parameter(
+            Name=ssm_name
+            )['Parameter']['Value'].split(',')
+        LOGGER.info('Buckets in list of exception: %s', s3_exception_list)
+    except ClientError as client_error:
+        LOGGER.error('No SSM parameter found: %s', client_error)
     return s3_exception_list
 
 
@@ -109,6 +116,7 @@ def apply_block_access(client, bucket_name):
     Apply public access block
     """
     try:
+        LOGGER.info('Put Access Block on S3 Bucket: %s', bucket_name)
         return client.put_public_access_block(
             Bucket=bucket_name,
             PublicAccessBlockConfiguration={
@@ -123,10 +131,15 @@ def apply_block_access(client, bucket_name):
 
 def sns_notify_public_bucket(private_buckets, public_buckets):
     """
-    Notify the list of buckets where the encryption has been turn ON
+    Notify the list of buckets where Public Access Block has been turn ON
     """
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account - {} S3 Bucket Public Status'.format(AWS_ACCOUNT)
     message_body = '\n Public Access Block configuration applied to: {}'.format(private_buckets)
-    message_body += '\n !!!POTENTIAL PUBLIC BUCKETS, please review!!!: {}'.format(public_buckets)
+    message_body += '\n Configuration applied to {} buckets'.format(len(private_buckets))
+    if public_buckets:
+        message_body += '\n !!!POTENTIAL PUBLIC BUCKETS, please review!!!: {}'.format(
+            public_buckets
+        )
+        message_body += '\n Number of public buckets: {}'.format(len(public_buckets))
     sns_client.publish(TopicArn=TOPIC_ARN, Message=message_body, Subject=subject)
