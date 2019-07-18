@@ -15,37 +15,6 @@ def test_list_buckets():
     assert list[0]['Name'] == ('mybucket1')
     assert list[1]['Name'] == ('mybucket2')
 
-@mock_s3()
-def test_bucket_acl():
-    conn = boto3.client('s3')
-    conn.create_bucket(Bucket='mybucket1')
-    bucket_owner = conn.get_bucket_acl(Bucket='mybucket1')["Owner"]
-    conn.put_bucket_acl(Bucket='mybucket1', AccessControlPolicy={
-        "Grants": [
-            {
-                "Grantee": {
-                    "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery",
-                    "Type": "Group"
-                },
-                "Permission": "WRITE"
-            },
-            {
-                "Grantee": {
-                    "URI": "http://acs.amazonaws.com/groups/s3/LogDelivery",
-                    "Type": "Group"
-                },
-                "Permission": "READ_ACP"
-            }
-        ],
-        "Owner": bucket_owner
-    })
-    result = s3_public.bucket_acl(conn, 'mybucket1')
-    assert len(result) == 2
-    for g in result:
-        assert g["Grantee"]["URI"] == "http://acs.amazonaws.com/groups/s3/LogDelivery"
-        assert g["Grantee"]["Type"] == "Group"
-        assert g["Permission"] in ["WRITE", "READ_ACP"]
-
 
 @mock_s3()
 def test_retrieve_block_access():
@@ -57,7 +26,7 @@ def test_retrieve_block_access():
 @mock.patch.dict(os.environ,{'S3_EXCEPTION':'listbuckets'})
 @mock_ssm()
 def test_ssm_s3_list():
-    client = boto3.client('ssm')
+    client = boto3.client('ssm', region_name='eu-west-1')
     ssm_name = os.getenv('S3_EXCEPTION')
     client.put_parameter(
         Name='listbuckets',

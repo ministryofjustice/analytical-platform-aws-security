@@ -35,7 +35,7 @@ def test_apply_bucket_encryption():
 @mock.patch.dict(os.environ,{'S3_EXCEPTION':'listbuckets'})
 @mock_ssm()
 def test_ssm_s3_list():
-    client = boto3.client('ssm')
+    client = boto3.client('ssm', region_name='eu-west-1')
     ssm_name = os.getenv('S3_EXCEPTION')
     client.put_parameter(
         Name='listbuckets',
