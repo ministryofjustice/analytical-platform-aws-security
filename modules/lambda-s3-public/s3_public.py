@@ -118,5 +118,5 @@ def sns_notify_public_bucket(private_buckets):
     if private_buckets:
         message_body = '\n Public Access Block configuration applied to: {}'.format(private_buckets)
         message_body += '\n Configuration applied to {} buckets'.format(len(private_buckets))
-        message_body += '\n Add your S3 Bucket to exception list it\'s suppose to be public')
+        message_body += '\n Add your S3 Bucket to exception list it is supposed to be public')
     sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
