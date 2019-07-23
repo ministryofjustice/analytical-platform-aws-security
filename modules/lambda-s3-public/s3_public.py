@@ -113,10 +113,10 @@ def sns_notify_public_bucket(private_buckets):
     """
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account - {} S3 Bucket Public Status'.format(AWS_ACCOUNT)
-    if not S3_EXCEPTION:
-        message_body = 'Missing SSM Parameter, please configure it'
     if private_buckets:
         message_body = '\n Public Access Block configuration applied to: {}'.format(private_buckets)
         message_body += '\n Configuration applied to {} buckets'.format(len(private_buckets))
         message_body += '\n Add your S3 Bucket to exception list it is supposed to be public'
+    else:
+        message_body = 'Missing SSM Parameter, please configure it'
     sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
