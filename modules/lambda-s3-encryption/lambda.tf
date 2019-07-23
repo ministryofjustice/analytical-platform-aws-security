@@ -43,7 +43,7 @@ resource "aws_lambda_function" "lambda_s3_encryption" {
   filename         = "${var.filename}"
   function_name    = "${var.lambda_function_name}"
   role             = "${aws_iam_role.lambda_s3_encryption_role.arn}"
-  handler          = "sns_s3_encryption.lambda_handler"
+  handler          = "s3_automated_encryption.lambda_handler"
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
