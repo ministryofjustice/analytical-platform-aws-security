@@ -47,7 +47,6 @@ resource "aws_lambda_function" "lambda_s3_public" {
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
-  count            = 0
   environment {
     variables = {
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
