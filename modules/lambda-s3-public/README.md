@@ -9,6 +9,7 @@ This module is controlled and deployed by Terraform, just indicate the source
 module in the root of this repository.
 This module requires access to the following SSM parameter:
 - `s3-public-exception-list`
+
 If this exception list is missing, this lambda would stop running prematurely
 
 # Tests
