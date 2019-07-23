@@ -37,6 +37,10 @@ variable "readonly_iam_policy" {
   default = "s3-encryption-iam-policy"
 }
 
+variable "access_s3_policy" {
+  default = "s3-encryption-s3-policy"
+}
+
 variable "access_ssm_policy" {
   default = "s3-encryption-ssm-policy"
 }
