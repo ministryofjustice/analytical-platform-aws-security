@@ -113,6 +113,7 @@ def sns_notify_public_bucket(private_buckets):
     """
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account - {} S3 Bucket Public Status'.format(AWS_ACCOUNT)
+    message_body = ''
     if private_buckets:
         message_body = '\n Public Access Block configuration applied to: {}'.format(private_buckets)
         message_body += '\n Configuration applied to {} buckets'.format(len(private_buckets))
