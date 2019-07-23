@@ -113,11 +113,11 @@ def sns_notify_encrypted_bucket(encrypted_bucket):
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account - {} S3 Bucket Encryption Status'.format(AWS_ACCOUNT)
     message_body = '\n Encryption applied to S3 buckets are {}'.format(encrypted_bucket)
-    if not S3_EXCEPTION:
-        message_body = 'Missing SSM Parameter, please configure it'
     if encrypted_bucket:
         message_body = '\n Public Access Block configuration applied to: {}'.format(
             encrypted_bucket
             )
         message_body += '\n Configuration applied to {} buckets'.format(len(encrypted_bucket))
+    else:
+        message_body = 'Missing SSM Parameter, please configure it'
     sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
