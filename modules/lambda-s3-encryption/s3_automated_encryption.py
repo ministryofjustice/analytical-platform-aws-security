@@ -33,7 +33,6 @@ def lambda_handler(event, _):
         if bucket_infos['Name'] not in exception_buckets:
             encrypt_infos = bucket_encrypted(client, bucket_infos['Name'])
             if encrypt_infos is not None:
-                LOGGER.info('Bucket: %s', bucket_infos['Name'])
                 check_bucket_encryption(encrypt_infos, bucket_infos['Name'])
             else:
                 apply_bucket_encryption(client, bucket_infos['Name'])
