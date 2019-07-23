@@ -52,7 +52,7 @@ variable "stack_name" {
   type        = "string"
 }
 
-variable "s3_encryption_emails" {
+variable "ssm_s3_encryption_emails" {
   default = "destination-emails-list-ap-aws-security"
 }
 
