@@ -164,8 +164,7 @@ resource "aws_iam_policy" "access_s3_policy" {
     {
       "Action": [
         "s3:GetEncryptionConfiguration",
-        "s3:List*",
-        "s3:PutEncryptionConfiguration"
+        "s3:List*"
       ],
       "Resource": "*",
       "Effect": "Allow"
