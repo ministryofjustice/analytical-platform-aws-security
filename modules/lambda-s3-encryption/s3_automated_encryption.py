@@ -35,8 +35,8 @@ def lambda_handler(event, _):
             if encrypt_infos is not None:
                 check_bucket_encryption(encrypt_infos, bucket_infos['Name'])
             else:
-                apply_bucket_encryption(client, bucket_infos['Name'])
                 encrypted_buckets.append(bucket_infos['Name'])
+                #apply_bucket_encryption(client, bucket_infos['Name'])
     LOGGER.info('List of encrypted buckets: %s', encrypted_buckets)
     if encrypted_buckets:
         LOGGER.info('Sending sns message')
@@ -89,21 +89,21 @@ def check_bucket_encryption(response, bucket_name):
             if str(value) in ('AES256', 'aws:kms'):
                 LOGGER.info("%s is already encrypted", bucket_name)
 
-def apply_bucket_encryption(client, bucket_name):
-    """
-    Return aws response setting encryption ON on bucket name
-    """
-    LOGGER.info("Encrypting following bucket: %s", bucket_name)
-    try:
-        return client.put_bucket_encryption(
-            Bucket=bucket_name,
-            ServerSideEncryptionConfiguration={
-                'Rules': [{
-                    'ApplyServerSideEncryptionByDefault': {'SSEAlgorithm': 'AES256'}
-                },]
-            })
-    except ClientError as client_error:
-        LOGGER.error("Failed encrypting bucket: %s", client_error)
+# def apply_bucket_encryption(client, bucket_name):
+#     """
+#     Return aws response setting encryption ON on bucket name
+#     """
+#     LOGGER.info("Encrypting following bucket: %s", bucket_name)
+#     try:
+#         return client.put_bucket_encryption(
+#             Bucket=bucket_name,
+#             ServerSideEncryptionConfiguration={
+#                 'Rules': [{
+#                     'ApplyServerSideEncryptionByDefault': {'SSEAlgorithm': 'AES256'}
+#                 },]
+#             })
+#     except ClientError as client_error:
+#         LOGGER.error("Failed encrypting bucket: %s", client_error)
 
 def sns_notify_encrypted_bucket(encrypted_bucket):
     """
