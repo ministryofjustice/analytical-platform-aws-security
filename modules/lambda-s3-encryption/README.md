@@ -8,7 +8,7 @@ This lambda requires access to SSM Parameter.
 
 This module is controlled and deployed by Terraform, just indicate the source
 module in the root of this repository.
-This module requires access to the following SSM parameter:
+This module requires access to the following SSM parameter (ListString):
 - `s3-encryption-exception-list`
 
 If this exception list is missing, this lambda would stop running prematurely
