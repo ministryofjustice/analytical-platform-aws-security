@@ -15,3 +15,9 @@ module "prod-s3-encryption" {
   source                     = "modules/lambda-s3-encryption"
   assume_role_in_account_id  = "${var.ap_accounts["prod"]}"
 }
+
+# Scan for s3 buckets encryption in data
+module "data-s3-encryption" {
+  source                     = "modules/lambda-s3-encryption"
+  assume_role_in_account_id  = "${var.ap_accounts["data"]}"
+}
