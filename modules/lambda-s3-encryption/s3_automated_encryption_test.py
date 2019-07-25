@@ -24,13 +24,13 @@ def test_bucket_encrypted():
     response = s3_automated_encryption.bucket_encrypted(conn, list[0]['Name'])
     assert response['ServerSideEncryptionConfiguration'] == {}
 
-# @mock_s3()
-# def test_apply_bucket_encryption():
-#     conn = boto3.client('s3')
-#     conn.create_bucket(Bucket='mybucket')
-#     list = s3_automated_encryption.list_buckets(conn)
-#     response = s3_automated_encryption.apply_bucket_encryption(conn, list[0]['Name'])
-#     assert response['ResponseMetadata']['HTTPStatusCode'] == 200
+@mock_s3()
+def test_apply_bucket_encryption():
+    conn = boto3.client('s3')
+    conn.create_bucket(Bucket='mybucket')
+    list = s3_automated_encryption.list_buckets(conn)
+    response = s3_automated_encryption.apply_bucket_encryption(conn, list[0]['Name'])
+    assert response['ResponseMetadata']['HTTPStatusCode'] == 200
 
 @mock.patch.dict(os.environ,{'S3_EXCEPTION':'listbuckets'})
 @mock_ssm()
