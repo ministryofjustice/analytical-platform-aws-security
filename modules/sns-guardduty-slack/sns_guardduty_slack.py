@@ -14,7 +14,7 @@ SLACK_HOOK_URL = os.environ['HOOK_URL']
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
-def lambda_handler(event):
+def lambda_handler(event, _):
     """
     Main method lambda_handler(event)
     """
