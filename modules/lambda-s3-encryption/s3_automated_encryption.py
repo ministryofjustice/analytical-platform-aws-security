@@ -77,7 +77,6 @@ def bucket_encrypted(client, bucket_name):
         LOGGER.info("No Server side encryption %s", client_error)
         return None
 
-
 def check_bucket_encryption(response, bucket_name):
     """
     Log information about bucket encryption
