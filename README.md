@@ -15,6 +15,8 @@ This Terraform repository would do the following:
 ## Prerequisites
 
 Install:
-* [Terraform][terraform]
+- Terraform
 
-## Tests
+## Deployment
+
+This project is using AWS CodePipeline to deploy modules in multiple AWS Accounts
