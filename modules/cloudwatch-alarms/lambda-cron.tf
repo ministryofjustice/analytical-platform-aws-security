@@ -90,12 +90,13 @@ resource "aws_iam_policy" "lambda_cron_cw_policy" {
 {
   "Version": "2012-10-17",
   "Statement": [
-    "Sid": "Cloudwatch_metrics",
-    "Effect": "Allow",
-    "Action": [
+    {
+      "Action": [
         "cloudwatch:PutMetricData"
-    ],
-    "Resource": "*"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    }
   ]
 }
 EOF
