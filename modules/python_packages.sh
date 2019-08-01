@@ -13,6 +13,9 @@ set -o pipefail
 set -o nounset
 
 function install_packages() {
+  pushd cloudwatch-alarms/
+  pip install -r requirements.txt -t .
+  popd
   pushd lambda-s3-public/
   pip install -r requirements.txt -t .
   popd
@@ -20,6 +23,9 @@ function install_packages() {
 }
 
 function zip_python() {
+  pushd cloudwatch-alarms/
+  zip -r ../lambda-cron.zip *
+  popd
   pushd lambda-s3-encryption/
   zip -r ../lambda-s3-encryption.zip s3_automated_encryption.py
   popd
@@ -39,6 +45,9 @@ function zip_python() {
 }
 
 function test_python() {
+  pushd cloudwatch-alarms/
+  pylint lambda_cron.py
+  popd
   pushd lambda-s3-encryption/
   pylint s3_automated_encryption.py
   pytest .
