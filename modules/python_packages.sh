@@ -26,6 +26,7 @@ function zip_python() {
   pushd cloudwatch-alarms/
   zip -r ../lambda-cron.zip *
   popd
+  mv lambda-cron.zip ../
   pushd lambda-s3-encryption/
   zip -r ../lambda-s3-encryption.zip s3_automated_encryption.py
   popd
