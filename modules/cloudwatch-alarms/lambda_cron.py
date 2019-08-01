@@ -4,9 +4,10 @@
 # cloudwatch
 """
 import logging
-import requests
 from botocore.exceptions import ClientError
 import boto3
+import requests
+
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
