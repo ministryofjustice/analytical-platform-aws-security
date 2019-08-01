@@ -8,7 +8,7 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 }
 
 # -----------------------------------------------------------
-# Create IAM Role for s3 public lambda
+# Create IAM Role for Cron Lambda testing endpoint
 # -----------------------------------------------------------
 
 resource "aws_iam_role" "lambda_cron_role" {
@@ -80,7 +80,7 @@ EOF
 }
 
 # -----------------------------------------------------------
-# READONLY IAM policy
+# WRITE CW policy
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "lambda_cron_cw_policy" {
