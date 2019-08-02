@@ -69,3 +69,9 @@ variable "stack_name" {
   default     = "lambda-sns-alerts-cloudformation"
   type        = "string"
 }
+
+variable "protocol" {
+  default     = "email"
+  description = "SNS Protocol to use. email or email-json"
+  type        = "string"
+}

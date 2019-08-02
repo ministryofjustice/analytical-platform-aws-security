@@ -163,7 +163,7 @@ data "aws_iam_policy_document" "sns_publish" {
   }
 }
 
-resource "aws_iam_policy" "sns" {
+resource "aws_iam_policy" "lambda_publish_sns" {
   policy = "${data.aws_iam_policy_document.sns_publish.json}"
   name   = "${var.sns_iam_access}"
 }
@@ -174,7 +174,7 @@ resource "aws_iam_policy" "sns" {
 
 resource "aws_iam_role_policy_attachment" "lambda_sns" {
   role = "${aws_iam_role.lambda_sns_alerts_role.name}"
-  policy_arn = "${aws_iam_policy.sns.arn}"
+  policy_arn = "${aws_iam_policy.lambda_publish_sns.arn}"
 }
 
 # -----------------------------------------------------------
@@ -216,45 +216,6 @@ resource "aws_iam_role_policy_attachment" "lambda_sns_alerts_logs" {
 resource "aws_iam_role_policy_attachment" "lambda_ssm" {
   role = "${aws_iam_role.lambda_sns_alerts_role.name}"
   policy_arn = "${aws_iam_policy.access_ssm_policy.arn}"
-}
-
-
-# -----------------------------------------------------------
-# Create policy for CloudWatch Event - SNS
-# -----------------------------------------------------------
-
-data "aws_iam_policy_document" "sns_publish" {
-  statement {
-    effect  = "Allow"
-    actions = ["SNS:Publish"]
-    resources = ["${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"]
-  }
-}
-
-resource "aws_iam_policy" "sns" {
-  policy = "${data.aws_iam_policy_document.sns_publish.json}"
-  name   = "${var.sns_iam_access}"
-}
-
-# -----------------------------------------------------------
-# Attach SNS Policy to Lambda role
-# -----------------------------------------------------------
-
-resource "aws_iam_role_policy_attachment" "lambda_sns" {
-  role = "${aws_iam_role.lambda_s3_public_role.name}"
-  policy_arn = "${aws_iam_policy.sns.arn}"
-}
-
-
-# -----------------------------------------------------------
-# Attach sns Policy to Lambda role
-# -----------------------------------------------------------
-
-
-
-resource "aws_iam_role_policy_attachment" "lambda_sns_alerts" {
-  role = "${aws_iam_role.lambda_sns_alerts_role.name}"
-  policy_arn = "${aws_iam_policy.access_sns_alerts_policy.arn}"
 }
 
 # -----------------------------------------------------------
