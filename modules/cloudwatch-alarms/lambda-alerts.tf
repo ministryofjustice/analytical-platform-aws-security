@@ -31,17 +31,27 @@ resource "aws_cloudwatch_metric_alarm" "whitelisted_sdt" {
 data "aws_iam_policy_document" "cw_alarm_sns_topic_policy" {
   statement {
     effect  = "Allow"
-    actions = ["SNS:Publish"]
+    actions = [
+      "SNS:GetTopicAttributes",
+      "SNS:SetTopicAttributes",
+      "SNS:AddPermission",
+      "SNS:RemovePermission",
+      "SNS:DeleteTopic",
+      "SNS:Subscribe",
+      "SNS:ListSubscriptionsByTopic",
+      "SNS:Publish",
+      "SNS:Receive"
+    ]
     principals {
       type = "AWS"
       identifiers = ["*"]
     }
     resources = ["${aws_sns_topic.sns_cloudwatch_alarms.arn}"]
     condition = {
-      test = "ArnLike"
-      variable = "AWS:SourceArn"
+      test = "StringEquals"
+      variable = "AWS:SourceOwner"
       values = [
-        "arn:aws:cloudwatch:::alarm:*"
+        "${var.assume_role_in_account_id}"
       ]
     }
   }
