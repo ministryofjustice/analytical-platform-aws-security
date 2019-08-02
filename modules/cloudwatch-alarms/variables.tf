@@ -45,10 +45,6 @@ variable "lambda_sns_alerts_role" {
   default = "lambda-sns-alerts-role"
 }
 
-variable "lambda_cron_log_policy" {
-  default = "lambda-cron-log-policy"
-}
-
 variable "sns_iam_access" {
   default = "lambda-sns-alerts-iam-access"
 }
