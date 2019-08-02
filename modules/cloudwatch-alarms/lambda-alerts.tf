@@ -33,10 +33,17 @@ data "aws_iam_policy_document" "cw_alarm_sns_topic_policy" {
     effect  = "Allow"
     actions = ["SNS:Publish"]
     principals {
-      type        = "Service"
-      identifiers = ["events.amazonaws.com"]
+      type = "AWS"
+      identifiers = ["*"]
     }
     resources = ["${aws_sns_topic.sns_cloudwatch_alarms.arn}"]
+    condition = {
+      test = "ArnLike"
+      variable = "AWS:SourceArn"
+      values = [
+        "arn:aws:cloudwatch:::alarm:*"
+      ]
+    }
   }
 }
 
