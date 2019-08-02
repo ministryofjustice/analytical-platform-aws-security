@@ -9,8 +9,7 @@ resource "aws_cloudwatch_metric_alarm" "whitelisted_sdt" {
   metric_name               = "BLOCKED_PAGE"
   namespace                 = "SDT_SITE/RESPONSES"
   dimensions                = {
-    Name                    = "RESPONSE_PAGES"
-    Value                   = "URLS"
+    RESPONSE_PAGES          = "URLS"
   }
   period                    = "120"
   statistic                 = "Average"
