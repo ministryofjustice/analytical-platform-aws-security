@@ -25,7 +25,7 @@ resource "aws_cloudwatch_metric_alarm" "whitelisted_sdt" {
 # Create policy for CloudWatch Alarm Event - SNS
 # -----------------------------------------------------------
 
-data "aws_iam_policy_document" "sns_topic_policy" {
+data "aws_iam_policy_document" "cw_alarm_sns_topic_policy" {
   statement {
     effect  = "Allow"
     actions = ["SNS:Publish"]
@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "sns_topic_policy" {
   }
 }
 
-resource "aws_lambda_permission" "with_sns" {
+resource "aws_lambda_permission" "with_sns_to_lambda" {
   statement_id  = "AllowExecutionFromSNS"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.lambda_sns_alerts.function_name}"
@@ -49,9 +49,9 @@ resource "aws_lambda_permission" "with_sns" {
 # Attach Policy to SNS
 # -----------------------------------------------------------
 
-resource "aws_sns_topic_policy" "default" {
+resource "aws_sns_topic_policy" "default_alarm_sns" {
   arn    = "${aws_sns_topic.sns_cloudwatch_alarms.arn}"
-  policy = "${data.aws_iam_policy_document.sns_topic_policy.json}"
+  policy = "${data.aws_iam_policy_document.cw_alarm_sns_topic_policy.json}"
 }
 
 # -----------------------------------------------------------
@@ -62,7 +62,7 @@ resource "aws_sns_topic" "sns_cloudwatch_alarms" {
   name = "sns-cloudwatch-alarms"
 }
 
-resource "aws_sns_topic_subscription" "lambda" {
+resource "aws_sns_topic_subscription" "sns_lambda" {
   topic_arn = "${aws_sns_topic.sns_cloudwatch_alarms.arn}"
   protocol  = "lambda"
   endpoint  = "${aws_lambda_function.lambda_sns_alerts.arn}"
@@ -155,7 +155,7 @@ EOF
 # Create policy for allowing lambda - SNS
 # -----------------------------------------------------------
 
-data "aws_iam_policy_document" "sns_publish" {
+data "aws_iam_policy_document" "lambda_sns_publish" {
   statement {
     effect  = "Allow"
     actions = ["SNS:Publish"]
@@ -164,7 +164,7 @@ data "aws_iam_policy_document" "sns_publish" {
 }
 
 resource "aws_iam_policy" "lambda_publish_sns" {
-  policy = "${data.aws_iam_policy_document.sns_publish.json}"
+  policy = "${data.aws_iam_policy_document.lambda_sns_publish.json}"
   name   = "${var.sns_iam_access}"
 }
 
