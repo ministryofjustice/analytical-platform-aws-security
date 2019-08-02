@@ -152,7 +152,7 @@ EOF
 }
 
 # -----------------------------------------------------------
-# Create policy for allowing SNS
+# Create policy for allowing lambda - SNS
 # -----------------------------------------------------------
 
 data "aws_iam_policy_document" "sns_publish" {
@@ -204,13 +204,13 @@ EOF
 # Attach Logging Policy to Lambda role
 # -----------------------------------------------------------
 
-resource "aws_iam_role_policy_attachment" "lambda_logs" {
+resource "aws_iam_role_policy_attachment" "lambda_sns_alerts_logs" {
   role = "${aws_iam_role.lambda_sns_alerts_role.name}"
   policy_arn = "${aws_iam_policy.sns_alerts_log_policy.arn}"
 }
 
 # -----------------------------------------------------------
-# Attach iam Policy to Lambda role
+# Attach ssm Policy to Lambda role
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_ssm" {
@@ -218,9 +218,39 @@ resource "aws_iam_role_policy_attachment" "lambda_ssm" {
   policy_arn = "${aws_iam_policy.access_ssm_policy.arn}"
 }
 
+
 # -----------------------------------------------------------
-# Attach iam Policy to Lambda role
+# Create policy for CloudWatch Event - SNS
 # -----------------------------------------------------------
+
+data "aws_iam_policy_document" "sns_publish" {
+  statement {
+    effect  = "Allow"
+    actions = ["SNS:Publish"]
+    resources = ["${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"]
+  }
+}
+
+resource "aws_iam_policy" "sns" {
+  policy = "${data.aws_iam_policy_document.sns_publish.json}"
+  name   = "${var.sns_iam_access}"
+}
+
+# -----------------------------------------------------------
+# Attach SNS Policy to Lambda role
+# -----------------------------------------------------------
+
+resource "aws_iam_role_policy_attachment" "lambda_sns" {
+  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  policy_arn = "${aws_iam_policy.sns.arn}"
+}
+
+
+# -----------------------------------------------------------
+# Attach sns Policy to Lambda role
+# -----------------------------------------------------------
+
+
 
 resource "aws_iam_role_policy_attachment" "lambda_sns_alerts" {
   role = "${aws_iam_role.lambda_sns_alerts_role.name}"
