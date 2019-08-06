@@ -30,7 +30,7 @@ def lambda_handler(event, _):
     users = list_users(client)
     excluded_users = users_excluded_check(client, now, users)
     if excluded_users:
-        sns_dict['excluded_users'].update(list)
+        sns_dict['excluded_users'].update(excluded_users)
     curated_list_users = get_curated_list(users, excluded_users)
     res_list = password_last_used_absent(curated_list_users)
     if res_list:
