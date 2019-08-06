@@ -29,33 +29,26 @@ def lambda_handler(event, _):
     res_list = []
     users = list_users(client)
     excluded_users = users_excluded_check(client, now, users)
-    if excluded_users:
-        sns_dict['excluded_users'].update(excluded_users)
+    sns_dict['excluded_users'] = excluded_users
     curated_list_users = get_curated_list(users, excluded_users)
     res_list = password_last_used_absent(curated_list_users)
-    if res_list:
-        sns_dict['password_never_used'].update(res_list)
-        res_list = []
+    sns_dict['password_never_used'] = res_list
+    res_list = []
     res_list = password_last_used_exceed(curated_list_users, now)
-    if res_list:
-        sns_dict['password_exceed'].update(res_list)
-        res_list = []
+    sns_dict['password_exceed'] = res_list
+    res_list = []
     res_list = password_last_used_warning(curated_list_users, now)
-    if res_list:
-        sns_dict['password_warning'].update(res_list)
-        res_list = []
+    sns_dict['password_warning'] = res_list
+    res_list = []
     res_list = last_used_date_absent(client, curated_list_users)
-    if res_list:
-        sns_dict['key_never_used'].update(res_list)
-        res_list = []
+    sns_dict['key_never_used'] = res_list
+    res_list = []
     res_list = last_used_date_exceed(client, now, curated_list_users)
-    if res_list:
-        sns_dict['key_exceed'].update(res_list)
-        res_list = []
+    sns_dict['key_exceed'] = res_list
+    res_list = []
     res_list = last_used_date_warning(client, now, curated_list_users)
-    if res_list:
-        sns_dict['key_warning'].update(res_list)
-        res_list = []
+    sns_dict['key_warning'] = res_list
+    res_list = []
     LOGGER.info("Report send to sns: %s", sns_dict)
     sns_send_notifications(**sns_dict)
 
