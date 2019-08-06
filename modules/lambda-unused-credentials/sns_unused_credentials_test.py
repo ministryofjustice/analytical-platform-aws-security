@@ -278,3 +278,17 @@ def test_deactivate_access_key():
     list_keys = sns_unused_credentials.list_keys(iam, users[0])
     resp = sns_unused_credentials.access_key_active(list_keys[0])
     assert resp is False
+
+@mock_iam()
+def test_move_user_suspended_group():
+    iam = boto3.client('iam', region_name='us-east-1')
+    username = 'my-user1'
+    groupname = 'SuspendedGroup'
+    iam.create_user(UserName=username)
+    iam.create_group(GroupName=groupname)
+    users = sns_unused_credentials.list_users(iam)
+    sns_unused_credentials.move_user_suspended_group(iam, users[0])
+    users = sns_unused_credentials.list_users(iam)
+    resp = sns_unused_credentials.list_groups(iam, users[0])
+    assert len(resp) == 1
+    assert resp[0]['GroupName'] == (groupname)

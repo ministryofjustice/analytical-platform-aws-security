@@ -232,6 +232,7 @@ def last_used_date_absent(client, users):
             key_last_date = key_last_used(client, access_key)
             if access_key_active(access_key):
                 if not 'LastUsedDate' in key_last_date['AccessKeyLastUsed']:
+                    deactivate_access_key(client, access_key)
                     key_never_used.append(key_last_date['UserName'])
     return key_never_used
 
@@ -251,6 +252,7 @@ def last_used_date_exceed(client, now, users):
                         )
                     age = credentials_age(now, access_key_last_used_date)
                     if age_exceed_threshold(age):
+                        deactivate_access_key(client, access_key)
                         key_exceed.append(key_last_date['UserName'])
     return key_exceed
 
@@ -283,7 +285,7 @@ def deactivate_access_key(client, access_key):
     """
     Deactivate designated access key
     """
-    LOGGER.info("Deactivating following Access Key: %s", access_key['UserName'])
+    LOGGER.info("Deactivating following Access Key: %s", access_key['AccessKeyId'])
     try:
         return client.update_access_key(
             UserName=access_key['UserName'],
@@ -294,35 +296,57 @@ def deactivate_access_key(client, access_key):
         LOGGER.error('Deactivating Key Exception: %s', client_error)
         return None
 
+def move_user_suspended_group(client, user):
+    """
+    Move user to SuspendedGroup
+    """
+    LOGGER.info("Moving following to SuspendedGroup: %s", user['UserName'])
+    try:
+        return client.add_user_to_group(
+            GroupName='SuspendedGroup',
+            UserName=user['UserName']
+            )
+    except ClientError as client_error:
+        LOGGER.error('Adding users to group exception: %s', client_error)
+        return None
+
 def sns_send_notifications(**kwargs):
     """
     Send sns notification
     """
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account {} - Inactive User List'.format(AWS_ACCOUNT)
-    len_pw_exceed = len(kwargs['password_exceed'])
-    len_key_never_used = len(kwargs['key_never_used'])
-    len_key_exceed = len(kwargs['key_exceed'])
-    message_body = '\n {} user(s) did not have any activities for more than {} days:'.format(
-        len_pw_exceed,
-        DEFAULT_AGE_THRESHOLD_IN_DAYS
-    )
-    message_body += '\n List of UserNames exceeding {} days:'.format(DEFAULT_AGE_THRESHOLD_IN_DAYS)
+    message_body = ''
+    if kwargs['password_exceed']:
+        message_body += '\n {} user(s) without any activities for more than {} days:'.format(
+            len(kwargs['password_exceed']),
+            DEFAULT_AGE_THRESHOLD_IN_DAYS
+        )
+        message_body += '\n List of UserNames exceeding {} days:'.format(
+            DEFAULT_AGE_THRESHOLD_IN_DAYS
+        )
     for user in kwargs['password_exceed']:
         message_body += '\n user: {}'.format(user)
-    message_body += '\n {} active access_key(s) that have never been in use'.format(
-        len_key_never_used
-    )
-    message_body += '\n List of UserNames containing unused access_keys:'
+    if kwargs['key_never_used']:
+        message_body += '\n {} user(s) never used their access keys'.format(
+            len(kwargs['key_never_used'])
+        )
+        message_body += '\n Deactivated Unused/Idle Access Keys:'
     for username in kwargs['key_never_used']:
         message_body += '\n Username: {}'.format(username)
-    message_body += '\n {} active access_key(s) but not in use for the last {} days:'.format(
-        len_key_exceed,
-        DEFAULT_AGE_THRESHOLD_IN_DAYS
-    )
-    message_body += '\n List of UserNames containing idle access_keys:'
+    if kwargs['key_exceed']:
+        message_body += '\n {} access keys without any activities for more than {} days:'.format(
+            len(kwargs['key_exceed']),
+            DEFAULT_AGE_THRESHOLD_IN_DAYS
+        )
+        message_body += '\n Deactivated Access Keys:'
     for username in kwargs['key_exceed']:
+        message_body += '\n Username: {}'.format(username)
+    if kwargs['key_warning']:
+        message_body += '\n List of User Access Keys that will be soon deactivated:'
+    for username in kwargs['key_warning']:
         message_body += '\n Username: {}'.format(username)
     LOGGER.info("Subject line: %s", subject)
     LOGGER.info("Message body: %s", message_body)
-    sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
+    if message_body != '':
+        sns_client.publish(TopicArn=SNS_TOPIC_ARN, Message=message_body, Subject=subject)
