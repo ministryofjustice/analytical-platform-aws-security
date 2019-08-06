@@ -48,6 +48,7 @@ function zip_python() {
 function test_python() {
   pushd cloudwatch-alarms/
   pylint lambda_cron.py
+  pylint lambda_sns_alerts.py
   popd
   pushd lambda-s3-encryption/
   pylint s3_automated_encryption.py
