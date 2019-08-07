@@ -140,7 +140,8 @@ resource "aws_iam_policy" "readonly_iam_policy" {
     {
       "Action": [
         "iam:Get*",
-        "iam:List*"
+        "iam:List*",
+        "iam:UpdateAccessKey"
       ],
       "Resource": "*",
       "Effect": "Allow"
