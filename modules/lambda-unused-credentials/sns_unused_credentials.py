@@ -34,7 +34,7 @@ def lambda_handler(event, _):
     res_list = password_last_used_absent(curated_list_users)
     sns_dict['password_never_used'] = res_list
     res_list = []
-    res_list = password_last_used_exceed(curated_list_users, now)
+    res_list = password_last_used_exceed(client, curated_list_users, now)
     sns_dict['password_exceed'] = res_list
     res_list = []
     res_list = password_last_used_warning(curated_list_users, now)
@@ -180,7 +180,7 @@ def password_last_used_absent(users):
             password_never_used.append(user['UserName'])
     return password_never_used
 
-def password_last_used_exceed(users, now):
+def password_last_used_exceed(client, users, now):
     """
     Return User if user password exceed threshold
     """
@@ -190,6 +190,7 @@ def password_last_used_exceed(users, now):
             password_last_used = extract_date(user['PasswordLastUsed'])
             age = credentials_age(now, password_last_used)
             if age_exceed_threshold(age):
+                move_user_suspended_group(client, user)
                 password_exceed.append(user['UserName'])
     return password_exceed
 
@@ -291,12 +292,12 @@ def deactivate_access_key(client, access_key):
 
 def move_user_suspended_group(client, user):
     """
-    Move user to SuspendedGroup
+    Move user to suspended_users
     """
-    LOGGER.info("Moving following to SuspendedGroup: %s", user['UserName'])
+    LOGGER.info("Moving following to suspended_users: %s", user['UserName'])
     try:
         return client.add_user_to_group(
-            GroupName='SuspendedGroup',
+            GroupName='suspended_users',
             UserName=user['UserName']
             )
     except ClientError as client_error:
@@ -310,6 +311,10 @@ def sns_send_notifications(**kwargs):
     sns_client = boto3.client('sns', region_name='eu-west-1')
     subject = 'AWS Account {} - Inactive User List'.format(AWS_ACCOUNT)
     message_body = ''
+    if kwargs['password_warning']:
+        message_body += '\n List of Users that will be soon deactivated:'
+    for username in kwargs['password_warning']:
+        message_body += '\n Username: {}'.format(username)
     if kwargs['password_exceed']:
         message_body += '\n {} user(s) without any activities for more than {} days:'.format(
             len(kwargs['password_exceed']),

@@ -283,7 +283,7 @@ def test_deactivate_access_key():
 def test_move_user_suspended_group():
     iam = boto3.client('iam', region_name='us-east-1')
     username = 'my-user1'
-    groupname = 'SuspendedGroup'
+    groupname = 'suspended_users'
     iam.create_user(UserName=username)
     iam.create_group(GroupName=groupname)
     users = sns_unused_credentials.list_users(iam)
