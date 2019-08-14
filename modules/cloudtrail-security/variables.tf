@@ -18,5 +18,5 @@ variable "aws_security_iam_role" {
 }
 
 variable "s3_bucket_name" {
-  default = "s3-security-bucket-name"
+  default = "seceng-cloudtraillogs-754037799336-do-not-delete"
 }
