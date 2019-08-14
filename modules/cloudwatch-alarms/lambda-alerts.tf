@@ -3,26 +3,29 @@
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_metric_alarm" "whitelisted_sdt" {
-  alarm_name                = "whitelisted-sdt-endpoint"
-  comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = "2"
-  metric_name               = "BLOCKED_PAGE"
-  namespace                 = "SDT_SITE/RESPONSES"
-  dimensions                = {
-    RESPONSE_PAGES          = "URLS"
+  alarm_name          = "whitelisted-sdt-endpoint"
+  comparison_operator = "LessThanThreshold"
+  evaluation_periods  = "2"
+  metric_name         = "BLOCKED_PAGE"
+  namespace           = "SDT_SITE/RESPONSES"
+
+  dimensions = {
+    RESPONSE_PAGES = "URLS"
   }
-  period                    = "120"
-  statistic                 = "Average"
-  threshold                 = "1"
-  alarm_description         = "This metric monitors the status of whitelisted IP"
+
+  period            = "120"
+  statistic         = "Average"
+  threshold         = "1"
+  alarm_description = "This metric monitors the status of whitelisted IP"
+
   alarm_actions = [
-    "${aws_sns_topic.sns_cloudwatch_alarms.arn}"
+    "${aws_sns_topic.sns_cloudwatch_alarms.arn}",
   ]
+
   insufficient_data_actions = [
-    "${aws_sns_topic.sns_cloudwatch_alarms.arn}"
+    "${aws_sns_topic.sns_cloudwatch_alarms.arn}",
   ]
 }
-
 
 # -----------------------------------------------------------
 # Create policy for CloudWatch Alarm Event - SNS
@@ -30,7 +33,8 @@ resource "aws_cloudwatch_metric_alarm" "whitelisted_sdt" {
 
 data "aws_iam_policy_document" "cw_alarm_sns_topic_policy" {
   statement {
-    effect  = "Allow"
+    effect = "Allow"
+
     actions = [
       "SNS:GetTopicAttributes",
       "SNS:SetTopicAttributes",
@@ -40,18 +44,22 @@ data "aws_iam_policy_document" "cw_alarm_sns_topic_policy" {
       "SNS:Subscribe",
       "SNS:ListSubscriptionsByTopic",
       "SNS:Publish",
-      "SNS:Receive"
+      "SNS:Receive",
     ]
+
     principals {
-      type = "AWS"
+      type        = "AWS"
       identifiers = ["*"]
     }
+
     resources = ["${aws_sns_topic.sns_cloudwatch_alarms.arn}"]
+
     condition = {
-      test = "StringEquals"
+      test     = "StringEquals"
       variable = "AWS:SourceOwner"
+
       values = [
-        "${var.assume_role_in_account_id}"
+        "${var.assume_role_in_account_id}",
       ]
     }
   }
@@ -94,6 +102,7 @@ resource "aws_sns_topic_subscription" "sns_lambda" {
 
 resource "aws_iam_role" "lambda_sns_alerts_role" {
   name = "${var.lambda_sns_alerts_role}"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -119,6 +128,7 @@ resource "aws_lambda_function" "lambda_sns_alerts" {
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
+
   environment {
     variables = {
       SNS_TOPIC_ARN = "${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"
@@ -152,8 +162,9 @@ data "aws_ssm_parameter" "sns_alerts_emails" {
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "sns_alerts_log_policy" {
-  name = "${var.sns_alerts_log_policy}"
+  name        = "${var.sns_alerts_log_policy}"
   description = "IAM policy for logging from lambda"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -177,8 +188,8 @@ EOF
 
 data "aws_iam_policy_document" "lambda_sns_publish" {
   statement {
-    effect  = "Allow"
-    actions = ["SNS:Publish"]
+    effect    = "Allow"
+    actions   = ["SNS:Publish"]
     resources = ["${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"]
   }
 }
@@ -193,7 +204,7 @@ resource "aws_iam_policy" "lambda_publish_sns" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_sns" {
-  role = "${aws_iam_role.lambda_sns_alerts_role.name}"
+  role       = "${aws_iam_role.lambda_sns_alerts_role.name}"
   policy_arn = "${aws_iam_policy.lambda_publish_sns.arn}"
 }
 
@@ -202,8 +213,9 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "access_ssm_policy" {
-  name = "${var.access_ssm_policy}"
+  name        = "${var.access_ssm_policy}"
   description = "IAM policy for reading SSM parameter"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -225,7 +237,7 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_sns_alerts_logs" {
-  role = "${aws_iam_role.lambda_sns_alerts_role.name}"
+  role       = "${aws_iam_role.lambda_sns_alerts_role.name}"
   policy_arn = "${aws_iam_policy.sns_alerts_log_policy.arn}"
 }
 
@@ -234,7 +246,7 @@ resource "aws_iam_role_policy_attachment" "lambda_sns_alerts_logs" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_ssm" {
-  role = "${aws_iam_role.lambda_sns_alerts_role.name}"
+  role       = "${aws_iam_role.lambda_sns_alerts_role.name}"
   policy_arn = "${aws_iam_policy.access_ssm_policy.arn}"
 }
 
@@ -253,6 +265,7 @@ resource "aws_cloudformation_stack" "sns_topic" {
 
 data "template_file" "cloudformation_sns_stack" {
   template = "${file("${path.module}/email-sns-stack.json.tpl")}"
+
   vars {
     display_name  = "${data.aws_ssm_parameter.display_name.value}"
     subscriptions = "${join("," , formatlist("{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" }", split(",", data.aws_ssm_parameter.sns_alerts_emails.value), var.protocol))}"

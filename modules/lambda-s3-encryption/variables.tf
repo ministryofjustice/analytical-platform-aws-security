@@ -52,8 +52,8 @@ variable "protocol" {
 }
 
 variable "stack_name" {
-  default     = "s3-encryption-sns-cloudformation"
-  type        = "string"
+  default = "s3-encryption-sns-cloudformation"
+  type    = "string"
 }
 
 variable "ssm_s3_encryption_emails" {

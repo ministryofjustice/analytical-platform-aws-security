@@ -22,8 +22,9 @@ resource "aws_guardduty_invite_accepter" "member" {
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_rule" "main" {
-  name          = "guardduty-finding-events"
-  description   = "AWS GuardDuty event findings"
+  name        = "guardduty-finding-events"
+  description = "AWS GuardDuty event findings"
+
   event_pattern = <<PATTERN
 {
   "detail-type": [

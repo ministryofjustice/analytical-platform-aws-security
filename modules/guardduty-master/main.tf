@@ -21,8 +21,9 @@ output "guardduty_master_id" {
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_rule" "main" {
-  name          = "guardduty-finding-events"
-  description   = "AWS GuardDuty event findings"
+  name        = "guardduty-finding-events"
+  description = "AWS GuardDuty event findings"
+
   event_pattern = <<PATTERN
 {
   "detail-type": [

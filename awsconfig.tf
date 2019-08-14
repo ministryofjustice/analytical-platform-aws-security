@@ -9,37 +9,37 @@ module "aws-config" {
 }
 
 module "aws-config-aggregated-dev" {
-  source                     = "modules/aws-config-aggregated"
-  environment                = "dev"
-  assume_role_in_account_id  = "${var.ap_accounts["dev"]}"
+  source                    = "modules/aws-config-aggregated"
+  environment               = "dev"
+  assume_role_in_account_id = "${var.ap_accounts["dev"]}"
 }
 
 module "aws-config-aggregated-prod" {
-  source                     = "modules/aws-config-aggregated"
-  environment                = "prod"
-  assume_role_in_account_id  = "${var.ap_accounts["prod"]}"
+  source                    = "modules/aws-config-aggregated"
+  environment               = "prod"
+  assume_role_in_account_id = "${var.ap_accounts["prod"]}"
 }
 
 module "aws-config-aggregated-data" {
-  source                     = "modules/aws-config-aggregated"
-  environment                = "data"
-  assume_role_in_account_id  = "${var.ap_accounts["data"]}"
+  source                    = "modules/aws-config-aggregated"
+  environment               = "data"
+  assume_role_in_account_id = "${var.ap_accounts["data"]}"
 }
 
 module "aws-config-authorization-dev" {
-  source                     = "modules/aws-config-authorized"
-  aggregated_account_id      = "${var.ap_accounts["landing"]}"
-  assume_role_in_account_id  = "${var.ap_accounts["dev"]}"
+  source                    = "modules/aws-config-authorized"
+  aggregated_account_id     = "${var.ap_accounts["landing"]}"
+  assume_role_in_account_id = "${var.ap_accounts["dev"]}"
 }
 
 module "aws-config-authorization-prod" {
-  source                     = "modules/aws-config-authorized"
-  aggregated_account_id      = "${var.ap_accounts["landing"]}"
-  assume_role_in_account_id  = "${var.ap_accounts["prod"]}"
+  source                    = "modules/aws-config-authorized"
+  aggregated_account_id     = "${var.ap_accounts["landing"]}"
+  assume_role_in_account_id = "${var.ap_accounts["prod"]}"
 }
 
 module "aws-config-authorization-data" {
-  source                     = "modules/aws-config-authorized"
-  aggregated_account_id      = "${var.ap_accounts["landing"]}"
-  assume_role_in_account_id  = "${var.ap_accounts["data"]}"
+  source                    = "modules/aws-config-authorized"
+  aggregated_account_id     = "${var.ap_accounts["landing"]}"
+  assume_role_in_account_id = "${var.ap_accounts["data"]}"
 }

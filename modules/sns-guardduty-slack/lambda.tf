@@ -4,6 +4,7 @@
 
 resource "aws_iam_role" "sns_slack_lambda_role" {
   name = "${var.sns_slack_lambda_role}"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -29,10 +30,12 @@ data "aws_iam_policy_document" "sns_topic_policy" {
   statement {
     effect  = "Allow"
     actions = ["SNS:Publish"]
+
     principals {
       type        = "Service"
       identifiers = ["events.amazonaws.com"]
     }
+
     resources = ["${aws_sns_topic.guardduty_sns.arn}"]
   }
 }
@@ -51,8 +54,9 @@ resource "aws_sns_topic_policy" "default" {
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "sns_slack_lambda_logging" {
-  name = "${var.sns_slack_lambda_logging}"
+  name        = "${var.sns_slack_lambda_logging}"
   description = "IAM policy for logging from sns slack lambda"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -75,10 +79,9 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role = "${aws_iam_role.sns_slack_lambda_role.name}"
+  role       = "${aws_iam_role.sns_slack_lambda_role.name}"
   policy_arn = "${aws_iam_policy.sns_slack_lambda_logging.arn}"
 }
-
 
 resource "aws_lambda_permission" "with_sns" {
   statement_id  = "AllowExecutionFromSNS"
@@ -119,8 +122,8 @@ data "aws_ssm_parameter" "slack_incoming_webhook" {
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_target" "main" {
-  rule      = "${var.event_rule}"
-  arn       = "${aws_sns_topic.guardduty_sns.arn}"
+  rule = "${var.event_rule}"
+  arn  = "${aws_sns_topic.guardduty_sns.arn}"
 }
 
 resource "aws_lambda_function" "sns_slack_lambda" {
@@ -130,10 +133,11 @@ resource "aws_lambda_function" "sns_slack_lambda" {
   handler          = "sns_guardduty_slack.lambda_handler"
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
+
   environment {
     variables = {
       SLACK_CHANNEL = "${data.aws_ssm_parameter.slack_channel.value}"
-      HOOK_URL = "${data.aws_ssm_parameter.slack_incoming_webhook.value}"
+      HOOK_URL      = "${data.aws_ssm_parameter.slack_incoming_webhook.value}"
     }
   }
 }
