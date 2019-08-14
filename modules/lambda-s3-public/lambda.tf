@@ -13,6 +13,7 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 
 resource "aws_iam_role" "lambda_s3_public_role" {
   name = "${var.lambda_s3_public_role}"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -35,8 +36,8 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_cloudwatch_event_target" "main" {
-  rule       = "${aws_cloudwatch_event_rule.schedule.name}"
-  arn        = "${aws_lambda_function.lambda_s3_public.arn}"
+  rule = "${aws_cloudwatch_event_rule.schedule.name}"
+  arn  = "${aws_lambda_function.lambda_s3_public.arn}"
 }
 
 resource "aws_lambda_function" "lambda_s3_public" {
@@ -47,6 +48,7 @@ resource "aws_lambda_function" "lambda_s3_public" {
   source_code_hash = "${base64sha256(var.filename)}"
   runtime          = "python3.7"
   timeout          = "300"
+
   environment {
     variables = {
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
@@ -82,8 +84,9 @@ data "aws_ssm_parameter" "s3_public_emails" {
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "s3_public_log_policy" {
-  name = "${var.s3_public_log_policy}"
+  name        = "${var.s3_public_log_policy}"
   description = "IAM policy for logging from lambda"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -107,8 +110,8 @@ EOF
 
 data "aws_iam_policy_document" "sns_publish" {
   statement {
-    effect  = "Allow"
-    actions = ["SNS:Publish"]
+    effect    = "Allow"
+    actions   = ["SNS:Publish"]
     resources = ["${aws_cloudformation_stack.sns_topic.outputs["ARN"]}"]
   }
 }
@@ -123,7 +126,7 @@ resource "aws_iam_policy" "sns" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_sns" {
-  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  role       = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.sns.arn}"
 }
 
@@ -132,8 +135,9 @@ resource "aws_iam_role_policy_attachment" "lambda_sns" {
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "access_ssm_policy" {
-  name = "${var.access_ssm_policy}"
+  name        = "${var.access_ssm_policy}"
   description = "IAM policy for reading SSM parameter"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -155,8 +159,9 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_iam_policy" "access_s3_policy" {
-  name = "${var.access_s3_policy}"
+  name        = "${var.access_s3_policy}"
   description = "IAM policy for read and write public access block"
+
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -182,7 +187,7 @@ EOF
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
-  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  role       = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.s3_public_log_policy.arn}"
 }
 
@@ -191,7 +196,7 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_ssm" {
-  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  role       = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.access_ssm_policy.arn}"
 }
 
@@ -200,16 +205,16 @@ resource "aws_iam_role_policy_attachment" "lambda_ssm" {
 # -----------------------------------------------------------
 
 resource "aws_iam_role_policy_attachment" "lambda_s3" {
-  role = "${aws_iam_role.lambda_s3_public_role.name}"
+  role       = "${aws_iam_role.lambda_s3_public_role.name}"
   policy_arn = "${aws_iam_policy.access_s3_policy.arn}"
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_to_call" {
-    statement_id = "AllowExecutionFromCloudWatch"
-    action = "lambda:InvokeFunction"
-    function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
-    principal = "events.amazonaws.com"
-    source_arn = "${aws_cloudwatch_event_rule.schedule.arn}"
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.lambda_s3_public.function_name}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.schedule.arn}"
 }
 
 # -----------------------------------------------------------
@@ -227,6 +232,7 @@ resource "aws_cloudformation_stack" "sns_topic" {
 
 data "template_file" "cloudformation_sns_stack" {
   template = "${file("${path.module}/email-sns-stack.json.tpl")}"
+
   vars {
     display_name  = "${data.aws_ssm_parameter.display_name.value}"
     subscriptions = "${join("," , formatlist("{ \"Endpoint\": \"%s\", \"Protocol\": \"%s\" }", split(",", data.aws_ssm_parameter.s3_public_emails.value), var.protocol))}"

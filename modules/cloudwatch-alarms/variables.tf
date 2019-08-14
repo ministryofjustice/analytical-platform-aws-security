@@ -66,8 +66,8 @@ variable "sns_alerts_log_policy" {
 }
 
 variable "stack_name" {
-  default     = "lambda-sns-alerts-cloudformation"
-  type        = "string"
+  default = "lambda-sns-alerts-cloudformation"
+  type    = "string"
 }
 
 variable "protocol" {

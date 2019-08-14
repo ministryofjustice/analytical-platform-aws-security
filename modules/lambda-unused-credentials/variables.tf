@@ -44,8 +44,8 @@ variable "protocol" {
 }
 
 variable "stack_name" {
-  default     = "unused-credentials-sns-cloudformation"
-  type        = "string"
+  default = "unused-credentials-sns-cloudformation"
+  type    = "string"
 }
 
 variable "ssm_unused_credentials_emails" {
