@@ -21,7 +21,7 @@ def lambda_handler(event, _):
     url = "https://safety-diagnostic-tool.apps.alpha.mojanalytics.xyz/"
     res = endpoint_testing(url)
     if res is not None:
-        if res == 500:
+        if res == 403:
             insert_metric(1)
         elif res == 200:
             insert_metric(0)
