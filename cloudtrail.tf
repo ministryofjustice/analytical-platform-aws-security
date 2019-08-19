@@ -15,3 +15,9 @@ module "prod-cloudtrail-security" {
   source                    = "modules/cloudtrail-security"
   assume_role_in_account_id = "${var.ap_accounts["prod"]}"
 }
+
+# Add trail for data cloudtrail
+module "data-cloudtrail-security" {
+  source                    = "modules/cloudtrail-security"
+  assume_role_in_account_id = "${var.ap_accounts["data"]}"
+}
