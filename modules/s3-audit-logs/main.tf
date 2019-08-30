@@ -61,7 +61,7 @@ resource "aws_iam_user_policy" "fluentd_s3_user_policy" {
               "s3:List*",
               "s3:Get*",
               "s3:PutObject"
-            ]
+            ],
             "Resource": [
               "${aws_s3_bucket.audit_bucket.arn}",
               "${aws_s3_bucket.audit_bucket.arn}/*"
