@@ -6,6 +6,14 @@ resource "aws_s3_bucket" "audit_bucket" {
   bucket = "audit-security-logs-${var.assume_role_in_account_id}"
   acl    = "private"
 
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm     = "AES256"
+      }
+    }
+  }
+
   lifecycle_rule {
     id      = "log"
     enabled = true
@@ -31,8 +39,10 @@ resource "aws_s3_bucket" "audit_bucket" {
 resource "aws_s3_bucket_public_access_block" "audit_bucket_block_policy" {
   bucket = "${aws_s3_bucket.audit_bucket.id}"
 
-  block_public_acls   = true
-  block_public_policy = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 # -----------------------------------------------------------
