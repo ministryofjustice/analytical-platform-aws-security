@@ -54,7 +54,8 @@ resource "aws_iam_user" "fluentd_s3_user" {
 }
 
 resource "aws_iam_access_key" "fluentd_s3_user" {
-  user = "${aws_iam_user.fluentd_s3_user.name}"
+  user  = "${aws_iam_user.fluentd_s3_user.name}"
+  count = 0
 }
 
 resource "aws_iam_user_policy" "fluentd_s3_user_policy" {
