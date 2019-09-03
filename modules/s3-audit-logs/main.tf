@@ -50,7 +50,8 @@ resource "aws_s3_bucket_public_access_block" "audit_bucket_block_policy" {
 # -----------------------------------------------------------
 
 resource "aws_iam_user" "fluentd_s3_user" {
-  name = "fluentd-audit-s3-logs-user"
+  name  = "fluentd-audit-s3-logs-user"
+  count = 0
 }
 
 resource "aws_iam_access_key" "fluentd_s3_user" {
