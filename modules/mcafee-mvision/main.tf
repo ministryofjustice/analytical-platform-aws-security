@@ -17,6 +17,37 @@ resource "aws_s3_bucket" "mvision_cloudtrail_bucket" {
   bucket = "s3-mvision-trial-${var.assume_role_in_account_id}"
   acl    = "private"
 
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "AWSCloudTrailAclCheck",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "cloudtrail.amazonaws.com"
+          },
+          "Action": "s3:GetBucketAcl",
+          "Resource": "arn:aws:s3:::s3-mvision-trial-${var.assume_role_in_account_id}"
+      },
+      {
+          "Sid": "AWSCloudTrailWrite",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "cloudtrail.amazonaws.com"
+          },
+          "Action": "s3:PutObject",
+          "Resource": "arn:aws:s3:::s3-mvision-trial-${var.assume_role_in_account_id}/*",
+          "Condition": {
+              "StringEquals": {
+                  "s3:x-amz-acl": "bucket-owner-full-control"
+              }
+          }
+      }
+  ]
+}
+POLICY
+
   server_side_encryption_configuration {
     rule {
       apply_server_side_encryption_by_default {
