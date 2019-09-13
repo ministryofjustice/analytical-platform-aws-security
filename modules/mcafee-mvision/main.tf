@@ -4,7 +4,7 @@
 
 resource "aws_cloudtrail" "aws_cloudtrail_mvision" {
   name                          = "mvision-trial-${var.assume_role_in_account_id}"
-  s3_bucket_name                = "${aws_s3_bucket.mvision_cloudtrail_bucket.bucket_id}"
+  s3_bucket_name                = "${aws_s3_bucket.mvision_cloudtrail_bucket.id}"
   include_global_service_events = true
   is_multi_region_trail         = true
 }
