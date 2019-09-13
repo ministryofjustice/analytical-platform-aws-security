@@ -15,10 +15,10 @@ resource "aws_s3_bucket" "audit_bucket" {
   }
 
   lifecycle_rule {
-    id      = "log"
+    id      = "logs"
     enabled = true
 
-    prefix = "log/"
+    prefix = "logs/"
 
     transition {
       days          = 30
@@ -43,44 +43,4 @@ resource "aws_s3_bucket_public_access_block" "audit_bucket_block_policy" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-# -----------------------------------------------------------
-# Fluentd AWS user to access S3 containing k8s audit logs
-# -----------------------------------------------------------
-
-resource "aws_iam_user" "fluentd_s3_user" {
-  name  = "fluentd-audit-s3-logs-user"
-  count = 0
-}
-
-resource "aws_iam_access_key" "fluentd_s3_user" {
-  user  = "${aws_iam_user.fluentd_s3_user.name}"
-  count = 0
-}
-
-resource "aws_iam_user_policy" "fluentd_s3_user_policy" {
-  name  = "fluentd-s3-policy"
-  user  = "${aws_iam_user.fluentd_s3_user.name}"
-  count = 0
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-              "s3:List*",
-              "s3:Get*",
-              "s3:PutObject"
-            ],
-            "Resource": [
-              "${aws_s3_bucket.audit_bucket.arn}",
-              "${aws_s3_bucket.audit_bucket.arn}/*"
-            ]
-        }
-   ]
-}
-EOF
 }
