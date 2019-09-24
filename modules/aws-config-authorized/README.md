@@ -24,4 +24,4 @@ If you decide to deploy in multiple accounts like display above, you would need 
 
 # Deployment
 
-As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
+As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Accounts.

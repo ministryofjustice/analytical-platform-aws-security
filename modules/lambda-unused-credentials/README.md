@@ -26,5 +26,5 @@ module "unused-credentials" {
 # Deployment
 
 As explained previously, this lambda is deployed by Terraform. All lambdas of this repository are tested and packaged by the script:
-`modules/python_packages.sh`
-This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
+- `modules/python_packages.sh`
+This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Accounts.

@@ -26,4 +26,4 @@ You would also need to deploy [GuardDuty Master](../guardduty-master), call this
 
 # Deployment
 
-As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
+As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Accounts.
