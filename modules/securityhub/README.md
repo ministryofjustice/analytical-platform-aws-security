@@ -20,4 +20,4 @@ module "security-hub-landing" {
 
 # Deployment
 
-As explained previously, this lambda is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
+As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
