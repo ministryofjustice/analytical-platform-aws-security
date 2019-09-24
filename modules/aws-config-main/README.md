@@ -23,8 +23,8 @@ module "aws-config" {
 
 ***Notes***
 
-If you decide to deploy in multiple accounts like display above, you would need to add [AWS Config authorized](../aws-config-authorized) and [AWS Config aggregated](../aws-config-aggregated) modules. 
+If you decide to deploy in multiple accounts like display above, you would need to add [AWS Config authorized](../aws-config-authorized) and [AWS Config aggregated](../aws-config-aggregated) modules.
 
 # Deployment
 
-As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
+As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Accounts.

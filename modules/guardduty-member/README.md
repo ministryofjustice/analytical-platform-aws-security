@@ -1,6 +1,6 @@
 # AWS GuardDuty members
 
-This module would enable GuardDuty in the selected account. This module is would require to have the AWS account ID containing AWS Guardduty master.
+This module would enable GuardDuty in the selected account. This module would require to have the AWS account ID containing AWS Guardduty master.
 
 # Installation
 

@@ -1,6 +1,6 @@
 # AWS Config aggregated
 
-This module would enable AWS Config and its rules in the selected AWS Account. This module can work in a standalone mode or send AWS Config results to a centralised accounts.
+This module would enable AWS Config and its rules in the selected AWS Account. This module can work in a standalone mode or send AWS Config results to a centralised account.
 
 # Installation
 
@@ -24,4 +24,4 @@ If you decide to aggregate in a centralise account, you would need to add [AWS C
 
 # Deployment
 
-As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Account.
+As explained previously, this module is deployed by Terraform. This repository is leveraging AWS CodePipeline to access and deploy in multiple AWS Accounts.
