@@ -20,7 +20,7 @@ This Terraform repository would do the following:
 Each terraform files at the root level of this project have specific function. As an example, lets enable Security AWS GuardDuty in the landing AWS Account for alerting on various findings. We'll also invite and enable another aws account, and link it to AWS GuardDuty in the landing AWS account.
 
 
-### AWS GuardDuty Master:
+### AWS GuardDuty master:
 
 By calling `guardduty-master` module, this would enable AWS GuardDuty in the selected account, and outputs necessary variables for other terraform modules.
 
