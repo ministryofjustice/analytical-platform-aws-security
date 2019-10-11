@@ -15,9 +15,3 @@ module "prod-mcafee-mvision" {
   source                    = "modules/mcafee-mvision"
   assume_role_in_account_id = "${var.ap_accounts["prod"]}"
 }
-
-# Add trail for data cloudtrail
-module "data-mcafee-mvision" {
-  source                    = "modules/mcafee-mvision"
-  assume_role_in_account_id = "${var.ap_accounts["data"]}"
-}
