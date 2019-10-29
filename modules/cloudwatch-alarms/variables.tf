@@ -75,3 +75,14 @@ variable "protocol" {
   description = "SNS Protocol to use. email or email-json"
   type        = "string"
 }
+
+variable "tags" {
+  type = "map"
+
+  default = {
+    business-unit = "Platforms"
+    application   = "analytical-platform"
+    is-production = true
+    owner         = "analytical-platform:analytics-platform-tech@digital.justice.gov.uk"
+  }
+}

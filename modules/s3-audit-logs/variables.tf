@@ -16,3 +16,14 @@ variable "region" {
 variable "aws_security_iam_role" {
   default = "terraform-aws-security"
 }
+
+variable "tags" {
+  type = "map"
+
+  default = {
+    business-unit = "Platforms"
+    application   = "analytical-platform"
+    is-production = true
+    owner         = "analytical-platform:analytics-platform-tech@digital.justice.gov.uk"
+  }
+}

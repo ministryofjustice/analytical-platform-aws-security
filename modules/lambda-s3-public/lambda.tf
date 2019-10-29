@@ -56,6 +56,13 @@ resource "aws_lambda_function" "lambda_s3_public" {
       S3_EXCEPTION  = "${var.ssm_s3_list_parameter}"
     }
   }
+
+  tags {
+    business-unit = "${var.tags["business-unit"]}"
+    application   = "${var.tags["application"]}"
+    is-production = "${var.tags["is-production"]}"
+    owner         = "${var.tags["owner"]}"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "lambda_s3_public_log" {

@@ -70,6 +70,22 @@ resource "aws_s3_bucket" "awsconfigbucket" {
       }
     }
   }
+
+  tags {
+    business-unit = "${var.tags["business-unit"]}"
+    application   = "${var.tags["application"]}"
+    is-production = "${var.tags["is-production"]}"
+    owner         = "${var.tags["owner"]}"
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "awsconfigbucket" {
+  bucket = "${aws_s3_bucket.awsconfigbucket.id}"
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 # -----------------------------------------------------------

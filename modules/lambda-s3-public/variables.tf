@@ -67,3 +67,14 @@ variable "sns_iam_access" {
 variable "ssm_s3_list_parameter" {
   default = "s3-public-exception-list"
 }
+
+variable "tags" {
+  type = "map"
+
+  default = {
+    business-unit = "Platforms"
+    application   = "analytical-platform"
+    is-production = true
+    owner         = "analytical-platform:analytics-platform-tech@digital.justice.gov.uk"
+  }
+}
