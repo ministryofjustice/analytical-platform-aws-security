@@ -76,6 +76,13 @@ POLICY
       days = 730
     }
   }
+
+  tags {
+    business-unit = "${var.tags["business-unit"]}"
+    application   = "${var.tags["application"]}"
+    is-production = "${var.tags["is-production"]}"
+    owner         = "${var.tags["owner"]}"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "mvision_cloudtrail_bucket_block_policy" {

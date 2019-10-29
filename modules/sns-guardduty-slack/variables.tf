@@ -38,3 +38,14 @@ variable "sns_slack_lambda_logging" {
 variable "ssm_slack_incoming_webhook" {}
 
 variable "ssm_slack_channel" {}
+
+variable "tags" {
+  type = "map"
+
+  default = {
+    business-unit = "Platforms"
+    application   = "analytical-platform"
+    is-production = true
+    owner         = "analytical-platform:analytics-platform-tech@digital.justice.gov.uk"
+  }
+}

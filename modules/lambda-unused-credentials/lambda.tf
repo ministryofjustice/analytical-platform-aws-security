@@ -55,6 +55,13 @@ resource "aws_lambda_function" "lambda_unused_credentials" {
       AWS_ACCOUNT   = "${var.assume_role_in_account_id}"
     }
   }
+
+  tags {
+    business-unit = "${var.tags["business-unit"]}"
+    application   = "${var.tags["application"]}"
+    is-production = "${var.tags["is-production"]}"
+    owner         = "${var.tags["owner"]}"
+  }
 }
 
 resource "aws_cloudwatch_log_group" "lambda_unused_credentials_log" {
