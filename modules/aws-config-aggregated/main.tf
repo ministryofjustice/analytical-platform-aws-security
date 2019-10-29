@@ -105,8 +105,8 @@ resource "aws_iam_policy" "s3_config_policy" {
 POLICY
 }
 
-resource "aws_s3_bucket_public_access_block" "s3_config_policy" {
-  bucket = "${aws_s3_bucket.s3_config_policy.id}"
+resource "aws_s3_bucket_public_access_block" "awsconfigbucket" {
+  bucket = "${aws_s3_bucket.awsconfigbucket.id}"
 
   block_public_acls       = true
   block_public_policy     = true
