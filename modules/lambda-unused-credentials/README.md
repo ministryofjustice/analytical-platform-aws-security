@@ -13,6 +13,11 @@ As an example, lets deploy this Lambda in Landing Account.
 ```hcl
 module "unused-credentials" {
   source                    = "modules/lambda-unused-credentials"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```

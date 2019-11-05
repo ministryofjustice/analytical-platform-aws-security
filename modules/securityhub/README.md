@@ -14,7 +14,10 @@ As an example, lets enable AWS SecurityHub in Landing Account.
 ```hcl
 module "security-hub-landing" {
   source                    = "modules/securityhub"
-  assume_role_in_account_id = "${var.ap_accounts["landing"]}"
+
+  providers = {
+    aws = "aws.account"
+  }
 }
 ```
 

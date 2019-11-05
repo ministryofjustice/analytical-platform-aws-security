@@ -13,6 +13,11 @@ As an example, lets create a Cloudtrail in AWS Landing Account.
 ```hcl
 module "landing-cloudtrail-security" {
   source                    = "modules/cloudtrail-security"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```

@@ -13,10 +13,14 @@ As an example, lets send invitation to link AWS GuardDuty master with a member:
 ```hcl
 module "aws_guardduty_invite_dev" {
   source                    = "modules/guardduty-invitation"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   detector_master_id        = "${module.aws_guardduty_master.guardduty_master_id}"
   email_member_parameter    = "${var.email_member_parameter_dev}"
   member_account_id         = "${var.ap_accounts["dev"]}"
-  assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```
 

@@ -27,6 +27,11 @@ By calling `guardduty-master` module, this would enable AWS GuardDuty in the sel
 ```hcl
 module "aws_guardduty_master" {
   source                    = "modules/guardduty-master"
+
+  providers = {
+    aws = "aws.account"
+  }
+
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```
@@ -38,10 +43,14 @@ After creating Guardduty Master, this module would send an invitation to its mem
 ```hcl
 module "aws_guardduty_invite_dev" {
   source                    = "modules/guardduty-invitation"
+
+  providers = {
+    aws = "aws.account"
+  }
+
   detector_master_id        = "${module.aws_guardduty_master.guardduty_master_id}"
   email_member_parameter    = "${var.email_member_parameter_dev}"
   member_account_id         = "${var.ap_accounts["dev"]}"
-  assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```
 
@@ -52,8 +61,12 @@ AWS GuardDuty member module would enable GuardDuty in the selected account, acce
 ```hcl
 module "aws_guardduty_member_dev" {
   source                    = "modules/guardduty-member"
+
+  providers = {
+    aws = "aws.account"
+  }
+
   master_account_id         = "${var.ap_accounts["landing"]}"
-  assume_role_in_account_id = "${var.ap_accounts["dev"]}"
 }
 ```
 
@@ -64,10 +77,14 @@ Final module, required module to send notifications to a selected Slack Channel.
 ```hcl
 module "aws_guardduty_sns_notifications" {
   source                     = "modules/sns-guardduty-slack"
+
+  providers = {
+    aws = "aws.account"
+  }
+
   event_rule                 = "${module.aws_guardduty_master.guardduty_event_rule}"
   ssm_slack_channel          = "${var.ssm_slack_channel}"
   ssm_slack_incoming_webhook = "${var.ssm_slack_incoming_webhook}"
-  assume_role_in_account_id  = "${var.ap_accounts["landing"]}"
 }
 ```
 
@@ -75,7 +92,7 @@ module "aws_guardduty_sns_notifications" {
 
 Install:
 - [Terraform](https://www.terraform.io/docs/)
-- [Terraform IAM Role](https://github.com/ministryofjustice/analytical-platform-iam)
+- [Terraform IAM Role](https://github.com/ministryofjustice/analytical-platform-aws-security/tree/master/init-roles)
 
 
 ## Deployment

@@ -16,6 +16,11 @@ As an example, lets deploy this Lambda in Landing Account.
 ```hcl
 module "landing-s3-encryption" {
   source                    = "modules/lambda-s3-encryption"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```

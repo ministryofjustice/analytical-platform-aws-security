@@ -13,11 +13,15 @@ As an example, lets activate AWS Config in the landing account:
 ```hcl
 module "aws-config" {
   source                     = "modules/aws-config-main"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   environment                = "landing"
   dev_aws_config_account_id  = "${var.ap_accounts["dev"]}"
   prod_aws_config_account_id = "${var.ap_accounts["prod"]}"
   data_aws_config_account_id = "${var.ap_accounts["data"]}"
-  assume_role_in_account_id  = "${var.ap_accounts["landing"]}"
 }
 ```
 

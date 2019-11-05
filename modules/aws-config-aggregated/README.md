@@ -13,8 +13,12 @@ As an example, lets activate AWS Config in the Dev account:
 ```hcl
 module "aws-config-aggregated-dev" {
   source                    = "modules/aws-config-aggregated"
+
+  providers = {
+    aws = "aws.account"
+  }
+
   environment               = "dev"
-  assume_role_in_account_id = "${var.ap_accounts["dev"]}"
 }
 ```
 

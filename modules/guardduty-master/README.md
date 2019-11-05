@@ -13,7 +13,10 @@ As an example, lets enable GuardDuty:
 ```hcl
 module "aws_guardduty_master" {
   source                    = "modules/guardduty-master"
-  assume_role_in_account_id = "${var.ap_accounts["landing"]}"
+
+  providers = {
+    aws = "aws.account"
+  }
 }
 ```
 

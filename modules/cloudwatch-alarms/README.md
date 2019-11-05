@@ -17,6 +17,11 @@ As an example, lets deploy this set of lambdas and Cloudwatch Metric / Alarm in 
 ```hcl
 module "landing-cloudwatch-alarms" {
   source                    = "modules/cloudwatch-alarms"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```
