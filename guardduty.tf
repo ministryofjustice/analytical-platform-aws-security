@@ -22,7 +22,7 @@ module "aws_guardduty_invite_dev" {
   source = "modules/guardduty-invitation"
 
   providers = {
-    aws = "aws.dev"
+    aws = "aws.landing"
   }
 
   detector_master_id     = "${module.aws_guardduty_master.guardduty_master_id}"
@@ -34,7 +34,7 @@ module "aws_guardduty_invite_prod" {
   source = "modules/guardduty-invitation"
 
   providers = {
-    aws = "aws.prod"
+    aws = "aws.landing"
   }
 
   detector_master_id     = "${module.aws_guardduty_master.guardduty_master_id}"
@@ -46,7 +46,7 @@ module "aws_guardduty_invite_data" {
   source = "modules/guardduty-invitation"
 
   providers = {
-    aws = "aws.data"
+    aws = "aws.landing"
   }
 
   detector_master_id     = "${module.aws_guardduty_master.guardduty_master_id}"
