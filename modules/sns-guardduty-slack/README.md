@@ -14,10 +14,14 @@ As an example, lets deploy SNS Notifications for GuardDuty in Landing Account. T
 ```hcl
 module "aws_guardduty_sns_notifications" {
   source                     = "modules/sns-guardduty-slack"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   event_rule                 = "${module.aws_guardduty_master.guardduty_event_rule}"
   ssm_slack_channel          = "${var.ssm_slack_channel}"
   ssm_slack_incoming_webhook = "${var.ssm_slack_incoming_webhook}"
-  assume_role_in_account_id  = "${var.ap_accounts["landing"]}"
 }
 ```
 

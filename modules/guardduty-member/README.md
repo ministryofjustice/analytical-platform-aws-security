@@ -13,8 +13,12 @@ As an example, lets enable GuardDuty and link it to master account:
 ```hcl
 module "aws_guardduty_member_dev" {
   source                    = "modules/guardduty-member"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   master_account_id         = "${var.ap_accounts["landing"]}"
-  assume_role_in_account_id = "${var.ap_accounts["dev"]}"
 }
 ```
 

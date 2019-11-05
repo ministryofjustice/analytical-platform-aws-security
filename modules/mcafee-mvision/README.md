@@ -14,6 +14,11 @@ As an example, lets create a new S3 bucket and a new cloudtrail for McAfee MVisi
 ```hcl
 module "landing-mcafee-mvision" {
   source                    = "modules/mcafee-mvision"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   assume_role_in_account_id = "${var.ap_accounts["landing"]}"
 }
 ```

@@ -13,8 +13,12 @@ As an example, lets authorise aggregating AWS Config information from Dev accoun
 ```hcl
 module "aws-config-authorization-dev" {
   source                    = "modules/aws-config-authorized"
+
+  providers = {
+    aws = "aws.account"
+  }
+  
   aggregated_account_id     = "${var.ap_accounts["landing"]}"
-  assume_role_in_account_id = "${var.ap_accounts["dev"]}"
 }
 ```
 
