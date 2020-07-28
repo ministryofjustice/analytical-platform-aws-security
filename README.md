@@ -5,6 +5,7 @@ AWS Baseline for all Analytical Platform AWS Accounts. This project is composed 
 ## Description
 
 This Terraform repository would do the following:
+
 * Enable AWS GuardDuty
 * Enable AWS Config
 * Enable AWS SecurityHub
@@ -12,15 +13,12 @@ This Terraform repository would do the following:
 * Implement a lambda scanning S3 Public buckets
 * Implement a lambda scanning S3 Bucket encryption
 * Enable trails from AWS Cloudtrail and centralise logs in AWS Security Account
-* Implement required components to enable a trial of McAfee MVision
-
 
 ## Usage
 
 Each terraform files at the root level of this project have specific function. As an example, lets enable Security AWS GuardDuty in the landing AWS Account for alerting on various findings. We'll also invite and enable another aws account, and link it to AWS GuardDuty in the landing AWS account.
 
-
-### AWS GuardDuty master:
+### AWS GuardDuty master
 
 By calling `guardduty-master` module, this would enable AWS GuardDuty in the selected account, and outputs necessary variables for other terraform modules.
 
@@ -36,7 +34,7 @@ module "aws_guardduty_master" {
 }
 ```
 
-### AWS GuardDuty invitation:
+### AWS GuardDuty invitation
 
 After creating Guardduty Master, this module would send an invitation to its members. This module requires GuardDuty Master ID, the value exported from previous module.  
 
@@ -54,7 +52,7 @@ module "aws_guardduty_invite_dev" {
 }
 ```
 
-### AWS GuardDuty members:
+### AWS GuardDuty members
 
 AWS GuardDuty member module would enable GuardDuty in the selected account, accept invitation from master and start sending event to GuardDuty Master.
 
@@ -70,7 +68,7 @@ module "aws_guardduty_member_dev" {
 }
 ```
 
-### AWS GuardDuty SNS notifications:
+### AWS GuardDuty SNS notifications
 
 Final module, required module to send notifications to a selected Slack Channel.
 
@@ -91,9 +89,9 @@ module "aws_guardduty_sns_notifications" {
 ## Prerequisites
 
 Install:
-- [Terraform](https://www.terraform.io/docs/)
-- [Terraform IAM Role](https://github.com/ministryofjustice/analytical-platform-aws-security/tree/master/init-roles)
 
+* [Terraform](https://www.terraform.io/docs/)
+* [Terraform IAM Role](https://github.com/ministryofjustice/analytical-platform-aws-security/tree/master/init-roles)
 
 ## Deployment
 
