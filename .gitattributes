@@ -1,0 +1,1 @@
+endpoint.tfvars filter=git-crypt diff=git-crypt merge=git-crypt
