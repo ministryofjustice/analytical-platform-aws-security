@@ -3,7 +3,11 @@ version: 0.2
 env:
   variables:
     TF_VERSION: "0.11.14"
-
+  parameter_store:
+    ES_DOMAIN: es_domain
+    ES_PORT: es_port
+    ES_USERNAME: es_username
+    ES_PASSWORD: es_password
 phases:
 
   install:
@@ -20,7 +24,7 @@ phases:
       - cd modules/
       - ./python_packages.sh
       - cd $CODEBUILD_SRC_DIR
-      - terraform plan -var-file=vars/ap_accounts.tfvars -var-file=endpoint.tfvars -out=tfplan -input=false -no-color
+      - terraform plan -var-file=vars/ap_accounts.tfvars -var es_domain=$ES_DOMAIN -var es_port=$ES_PORT -var es_username=$ES_USERNAME -var es_password=$ES_PASSWORD -out=tfplan -input=false -no-color
       - aws s3 cp tfplan s3://$PLAN_BUCKET/tfplan
 
   post_build:
