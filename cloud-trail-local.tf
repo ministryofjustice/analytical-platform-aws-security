@@ -1,108 +1,10 @@
 # policies lifted from analytics-platform-ops
 # infra->terraform->global->cloudtrail.tf
 
-
 # create a KMS key
 resource "aws_kms_key" "cloudtrail" {
   description = "Cloudtrail S3 bucket KMS key"
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Id": "Key policy created by CloudTrail",
-  "Statement": [
-    {
-      "Sid": "Enable IAM User Permissions",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": [
-          "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
-        ]
-      },
-      "Action": "kms:*",
-      "Resource": "*"
-    },
-    {
-      "Sid": "Allow CloudTrail to encrypt logs",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "cloudtrail.amazonaws.com"
-      },
-      "Action": "kms:GenerateDataKey*",
-      "Resource": "*",
-      "Condition": {
-        "StringLike": {
-          "kms:EncryptionContext:aws:cloudtrail:arn": "arn:aws:cloudtrail:*:${data.aws_caller_identity.current.account_id}:trail/*"
-        }
-      }
-    },
-    {
-      "Sid": "Allow CloudTrail to describe key",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "cloudtrail.amazonaws.com"
-      },
-      "Action": "kms:DescribeKey",
-      "Resource": "*"
-    },
-    {
-      "Sid": "Allow principals in the account to decrypt log files",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "kms:Decrypt",
-        "kms:ReEncryptFrom"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "kms:CallerAccount": "${data.aws_caller_identity.current.account_id}"
-        },
-        "StringLike": {
-          "kms:EncryptionContext:aws:cloudtrail:arn": "arn:aws:cloudtrail:*:${data.aws_caller_identity.current.account_id}:trail/*"
-        }
-      }
-    },
-    {
-      "Sid": "Allow alias creation during setup",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": "kms:CreateAlias",
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "kms:CallerAccount": "${data.aws_caller_identity.current.account_id}",
-          "kms:ViaService": "ec2.${var.region}.amazonaws.com"
-        }
-      }
-    },
-    {
-      "Sid": "Enable cross account log decryption",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "*"
-      },
-      "Action": [
-        "kms:Decrypt",
-        "kms:ReEncryptFrom"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringEquals": {
-          "kms:CallerAccount": "${data.aws_caller_identity.current.account_id}"
-        },
-        "StringLike": {
-          "kms:EncryptionContext:aws:cloudtrail:arn": "arn:aws:cloudtrail:*:${data.aws_caller_identity.current.account_id}:trail/*"
-        }
-      }
-    }
-  ]
-}
-POLICY
+  policy      = "${data.aws_iam_policy_document.cloudtrail_inline_kms_policy.json}"
 }
 
 #create KMS alias for key created above
@@ -186,7 +88,6 @@ resource "aws_s3_bucket" "global_cloudtrail" {
 POLICY
 }
 
-
 # user module froom analytics-platform-ops
 module "aws_account_logging" {
   source = "modules/aws_account_logging"
@@ -210,3 +111,132 @@ module "aws_account_logging" {
 }
 
 data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "cloudtrail_inline_kms_policy" {
+  statement {
+    sid       = "Enable IAM User Permissions"
+    effect    = "Allow"
+    actions   = ["kms:*"]
+    resources = ["*"]
+
+    principals {
+      type = "AWS"
+
+      identifiers = [
+        "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root",
+      ]
+    }
+  }
+
+  statement {
+    sid       = "Allow CloudTrail to encrypt logs"
+    effect    = "Allow"
+    actions   = ["kms:GenerateDataKey*"]
+    resources = ["*"]
+
+    principals {
+      type        = "service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "kms:EncryptionContext:aws:cloudtrail:arn"
+      values   = ["arn:aws:cloudtrail:*:${data.aws_caller_identity.current.account_id}:trail/*"]
+    }
+  }
+
+  statement {
+    sid     = "Allow CloudTrail to describe key"
+    effect  = "Allow"
+    actions = ["kms:DescribeKey"]
+
+    principals {
+      type        = "service"
+      identifiers = ["cloudtrail.amazonaws.com"]
+    }
+
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "Allow principals in the account to decrypt log files"
+    effect = "Allow"
+
+    actions = [
+      "kms:Decrypt",
+      "kms:ReEncryptFrom",
+    ]
+
+    principals {
+      type        = "aws"
+      identifiers = ["*"]
+    }
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = ["${data.aws_caller_identity.current.account_id}"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "kms:EncryptionContext:aws:cloudtrail:arn"
+      values   = ["arn:aws:cloudtrail:*:${data.aws_caller_identity.current.account_id}:trail/*"]
+    }
+  }
+
+  statement {
+    sid       = "Allow alias creation during setup"
+    effect    = "Allow"
+    actions   = ["kms:CreateAlias"]
+    resources = ["*"]
+
+    principals {
+      type        = "aws"
+      identifiers = ["*"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = ["${data.aws_caller_identity.current.account_id}"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values   = ["ec2.${var.region}.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = "Enable cross account log decryption"
+    effect    = "Allow"
+    resources = ["*"]
+
+    principals {
+      type        = "aws"
+      identifiers = ["*"]
+    }
+
+    actions = [
+      "kms:Decrypt",
+      "kms:ReEncryptFrom",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = ["${data.aws_caller_identity.current.account_id}"]
+    }
+
+    condition {
+      test     = "StringLike"
+      variable = "kms:EncryptionContext:aws:cloudtrail:arn"
+      values   = ["arn:aws:cloudtrail:*:${data.aws_caller_identity.current.account_id}:trail/*"]
+    }
+  }
+}

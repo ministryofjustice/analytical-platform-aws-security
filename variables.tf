@@ -35,9 +35,11 @@ variable "platform_root_domain" {
 
 # endpoint variables are crypted and stored in endpoint.tfvars
 variable "es_domain" {}
+
 variable "es_port" {}
 variable "es_username" {}
 variable "es_password" {}
+
 variable "es_scheme" {
   default = "https"
 }
