@@ -20,7 +20,7 @@ phases:
       - cd modules/
       - ./python_packages.sh
       - cd $CODEBUILD_SRC_DIR
-      - terraform plan -var-file=vars/ap_accounts.tfvars -out=tfplan -input=false -no-color
+      - terraform plan -var-file=vars/ap_accounts.tfvars -var-file=endpoint.tfvars -out=tfplan -input=false -no-color
       - aws s3 cp tfplan s3://$PLAN_BUCKET/tfplan
 
   post_build:

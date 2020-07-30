@@ -7,7 +7,7 @@ data "aws_iam_policy_document" "codebuild_policy" {
 }
 
 module "pipeline" {
-  source = "github.com/ministryofjustice/analytical-platform-pipeline"
+  source = "github.com/ministryofjustice/analytical-platform-pipeline?ref=1.0.0"
 
   name                   = "aws-security"
   pipeline_github_repo   = "analytical-platform-aws-security"
