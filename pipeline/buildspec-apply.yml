@@ -3,7 +3,6 @@ version: 0.2
 env:
   variables:
     TF_VERSION: "0.11.14"
-
 phases:
 
   install:
@@ -17,6 +16,7 @@ phases:
     commands:
       - cd $CODEBUILD_SRC_DIR
       - terraform init -input=false -no-color
+      - ls -la .terraform/*
       - cd modules/
       - ./python_packages.sh
       - cd $CODEBUILD_SRC_DIR
@@ -25,4 +25,4 @@ phases:
 
   post_build:
     commands:
-      - echo "terraform plan completed on `date`"
+      - echo "terraform apply completed on `date`"
