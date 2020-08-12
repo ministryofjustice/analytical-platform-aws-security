@@ -93,6 +93,18 @@ Install:
 * [Terraform](https://www.terraform.io/docs/)
 * [Terraform IAM Role](https://github.com/ministryofjustice/analytical-platform-aws-security/tree/master/init-roles)
 
+## Manual `terraform plan`
+
+To test a PR you can do a terraform plan locally e.g.
+
+```bash
+aws-vault exec landing-admin -- terraform init
+aws-vault exec landing-admin -- terraform plan -var-file=vars/ap_accounts.tfvars
+```
+
 ## Deployment
 
-This project is using AWS CodePipeline to deploy modules in multiple AWS Accounts
+This project is using AWS CodePipeline to deploy modules in multiple AWS Accounts.
+
+* [Pipeline](https://eu-west-1.console.aws.amazon.com/codesuite/codepipeline/pipelines/aws-security/view?region=eu-west-1)
+* [Terraform definition of the pipeline](pipeline/README.md)
