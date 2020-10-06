@@ -88,7 +88,7 @@ resource "aws_s3_bucket" "global_cloudtrail" {
 POLICY
 }
 
-# user module froom analytics-platform-ops
+# user module from analytics-platform-ops
 module "aws_account_logging" {
   source = "modules/aws_account_logging"
 
