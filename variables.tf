@@ -3,65 +3,72 @@ variable "ap_accounts" {
 }
 
 variable "email_member_parameter_dev" {
-  default = "dev-guardduty-member"
+  type = "string"
 }
 
 variable "email_member_parameter_prod" {
-  default = "prod-guardduty-member"
+  type = "string"
 }
 
 variable "email_member_parameter_data" {
-  default = "data-guardduty-member"
+  type = "string"
 }
 
 variable "ssm_slack_incoming_webhook" {
-  default = "landing-guardduty-incoming-webhook"
+  type = "string"
 }
 
 variable "ssm_slack_channel" {
-  default = "landing-guardduty-slack-channel"
+  type = "string"
 }
 
 variable "aws_security_iam_role" {
-  default = "terraform-aws-security"
+  type = "string"
 }
 
 # variables defaults lifted from analytics-platform-ops
-
-# default to the root domain used for the platform:
 variable "platform_root_domain" {
-  default = "mojanalytics.xyz"
+  type = "string"
+  description = "default to the root domain used for the platform"
 }
 
-# endpoint variables are crypted and stored in endpoint.tfvars
-variable "es_domain" {}
+variable "es_domain" {
+  type = "string"
+}
 
-variable "es_port" {}
-variable "es_username" {}
-variable "es_password" {}
+variable "es_port" {
+  type = "string"
+}
+
+variable "es_username" {
+  type = "string"
+}
+
+variable "es_password" {
+  type = "string"
+}
 
 variable "es_scheme" {
-  default = "https"
+  type = "string"
 }
 
-# default to this one - TODO - query state file of analytics-platform-ops to set this
 variable "vpc_id" {
-  default = "vpc-83dde3e5"
+  type = "string"
 }
 
-# buckets to push logs to
 variable "s3_logs_bucket_name" {
-  default = "moj-analytics-security-s3-logs"
+  type = "string"
+  description = "Bucket to push logs to"
 }
 
 variable "vpcflowlogs_s3_bucket_name" {
-  default = "moj-analytics-global-security-vpcflowlogs"
+  type = "string"
 }
 
 variable "global_cloudtrail_bucket_name" {
-  default = "moj-analytics-security-global-cloudtrail"
+  type = "string"
 }
 
 variable "region" {
-  default = "eu-west-1"
+  type = "string"
 }
